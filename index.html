@@ -455,6 +455,11 @@
             color: var(--primary);
         }
 
+        /* Stats bar - hidden on mobile */
+        .stats-bar {
+            display: none;
+        }
+
         /* ============================================
            FLOATING ACTION BUTTONS - Mobile
            ============================================ */
@@ -1263,6 +1268,10 @@
            ============================================ */
         .legend { display: none; }
 
+        /* View toggle and timeline bar - Hidden on Mobile */
+        .view-toggle { display: none; }
+        .timeline-bar { display: none; }
+
         /* ============================================
            TABLET BREAKPOINT (min-width: 768px)
            ============================================ */
@@ -1783,6 +1792,9 @@
 
     <!-- FABs (Mobile) -->
     <div class="fab-container interactive">
+        <button class="fab" id="resetFab" onclick="resetCamera()" aria-label="Reset view">
+            <i class="fa-solid fa-expand"></i>
+        </button>
         <button class="fab" id="pathFab" onclick="togglePathTracer()" aria-label="Path tracer">
             <i class="fa-solid fa-route"></i>
         </button>
