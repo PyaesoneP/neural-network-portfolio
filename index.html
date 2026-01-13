@@ -274,14 +274,14 @@
             padding: var(--spacing-md);
             padding-bottom: calc(var(--spacing-md) + var(--safe-bottom));
             z-index: 100;
-            max-height: 50vh;
+            max-height: 45vh;
             overflow-y: auto;
-            transform: translateY(0);
-            transition: transform 0.3s ease;
+            transform: translateY(calc(100% - 64px - var(--safe-bottom)));
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .bottom-sheet.collapsed {
-            transform: translateY(calc(100% - 70px - var(--safe-bottom)));
+        .bottom-sheet.expanded {
+            transform: translateY(0);
         }
 
         .bottom-sheet-handle {
@@ -289,8 +289,9 @@
             height: 4px;
             background: var(--text-muted);
             border-radius: 2px;
-            margin: 0 auto var(--spacing-sm);
+            margin: 0 auto var(--spacing-xs);
             opacity: 0.5;
+            cursor: pointer;
         }
 
         .bottom-sheet-header {
@@ -298,10 +299,11 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--spacing-sm);
+            cursor: pointer;
         }
 
         .bottom-sheet-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
         }
 
@@ -316,6 +318,36 @@
             background: linear-gradient(135deg, #00f0ff, #bf00ff);
             -webkit-background-clip: text;
             background-clip: text;
+        }
+
+        .sheet-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sheet-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .bottom-sheet.expanded .sheet-toggle i {
+            transform: rotate(180deg);
+        }
+
+        .sheet-content {
+            display: none;
+        }
+
+        .bottom-sheet.expanded .sheet-content {
+            display: block;
         }
 
         /* Quick Actions - Mobile */
@@ -429,30 +461,66 @@
         .fab-container {
             position: fixed;
             right: var(--spacing-md);
-            bottom: calc(70px + var(--safe-bottom) + var(--spacing-md));
+            bottom: calc(72px + var(--safe-bottom));
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-xs);
+            gap: var(--spacing-sm);
             z-index: 90;
         }
 
         .fab {
-            width: 48px;
-            height: 48px;
+            width: 52px;
+            height: 52px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: var(--shadow);
+            color: var(--text-primary);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
         }
 
         .fab:active { transform: scale(0.9); }
 
-        .fab.active { box-shadow: 0 0 20px rgba(124, 58, 237, 0.5); }
-        [data-theme="dark"] .fab.active { box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); }
+        .fab.active { 
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5); 
+        }
+        
+        [data-theme="dark"] .fab.active { 
+            background: linear-gradient(135deg, #00f0ff, #00a8ff);
+            color: black;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); 
+        }
+
+        .fab-label {
+            position: absolute;
+            right: 60px;
+            background: var(--bg-card);
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.2s ease;
+            pointer-events: none;
+            border: 1px solid var(--border);
+        }
+
+        .fab:active .fab-label,
+        .fab:focus .fab-label {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
         /* ============================================
            SEARCH OVERLAY - Mobile Optimized
@@ -1379,8 +1447,8 @@
                 flex-direction: column;
             }
 
-            .bottom-sheet.collapsed { transform: none; }
-
+            .bottom-sheet .sheet-content { display: block; }
+            .bottom-sheet .sheet-toggle { display: none; }
             .bottom-sheet-handle { display: none; }
 
             /* Hide FAB on desktop */
@@ -1656,6 +1724,7 @@
                 <div class="onboarding-step" data-step="1"></div>
                 <div class="onboarding-step" data-step="2"></div>
                 <div class="onboarding-step" data-step="3"></div>
+                <div class="onboarding-step" data-step="4"></div>
             </div>
             <div class="onboarding-buttons">
                 <button class="onboarding-btn onboarding-btn-secondary" id="onboarding-prev" onclick="prevOnboardingStep()" style="display: none;">Back</button>
@@ -1714,48 +1783,54 @@
 
     <!-- FABs (Mobile) -->
     <div class="fab-container interactive">
-        <button class="fab glass-panel" id="pathFab" onclick="togglePathTracer()" aria-label="Path tracer">
+        <button class="fab" id="pathFab" onclick="togglePathTracer()" aria-label="Path tracer">
             <i class="fa-solid fa-route"></i>
         </button>
-        <button class="fab glass-panel" id="viewFab" onclick="toggleViewMode()" aria-label="Toggle view">
+        <button class="fab" id="viewFab" onclick="toggleViewMode()" aria-label="Toggle view">
             <i class="fa-solid fa-clock-rotate-left" id="viewFabIcon"></i>
         </button>
     </div>
 
     <!-- Bottom Sheet (Mobile Primary) -->
     <div class="bottom-sheet glass-panel interactive" id="bottom-sheet">
-        <div class="bottom-sheet-handle" id="sheet-handle"></div>
-        <div class="bottom-sheet-header">
+        <div class="bottom-sheet-handle" id="sheet-handle" onclick="toggleBottomSheet()"></div>
+        <div class="bottom-sheet-header" onclick="toggleBottomSheet()">
             <h2 class="bottom-sheet-title">I am a <span class="highlight">Neural Network</span></h2>
+            <button class="sheet-toggle" aria-label="Expand/collapse">
+                <i class="fa-solid fa-chevron-up"></i>
+            </button>
         </div>
-        <p class="hero-description">Explore my journey from medical student to AI engineer. Each node is a skill, each connection shows synergy.</p>
         
-        <div class="quick-actions">
-            <button class="quick-btn quick-btn-primary" onclick="triggerPulse()" id="pulse-btn">
-                <i class="fa-solid fa-bolt"></i> Forward Pass
-            </button>
-            <button class="quick-btn quick-btn-secondary" onclick="toggleAutoRotate()" id="autoRotateBtn">
-                <i class="fa-solid fa-rotate"></i> Auto Rotate
-            </button>
-        </div>
+        <div class="sheet-content">
+            <p class="hero-description">Explore my journey from medical student to AI engineer. Each node is a skill, each connection shows synergy.</p>
+            
+            <div class="quick-actions">
+                <button class="quick-btn quick-btn-primary" onclick="triggerPulse()" id="pulse-btn">
+                    <i class="fa-solid fa-bolt"></i> Forward Pass
+                </button>
+                <button class="quick-btn quick-btn-secondary" onclick="toggleAutoRotate()" id="autoRotateBtn">
+                    <i class="fa-solid fa-rotate"></i> Auto Rotate
+                </button>
+            </div>
 
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="cameraToSection('input')">Background</button>
-            <button class="nav-tab" onclick="cameraToSection('hidden')">Skills</button>
-            <button class="nav-tab" onclick="cameraToSection('output')">Projects</button>
-        </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="cameraToSection('input')">Background</button>
+                <button class="nav-tab" onclick="cameraToSection('hidden')">Skills</button>
+                <button class="nav-tab" onclick="cameraToSection('output')">Projects</button>
+            </div>
 
-        <div class="keyboard-hints">
-            <span><kbd>F</kbd> Forward Pass</span>
-            <span><kbd>P</kbd> Path Tracer</span>
-            <span><kbd>T</kbd> Timeline View</span>
-            <span><kbd>/</kbd> Search</span>
-        </div>
+            <div class="keyboard-hints">
+                <span><kbd>F</kbd> Forward Pass</span>
+                <span><kbd>P</kbd> Path Tracer</span>
+                <span><kbd>T</kbd> Timeline View</span>
+                <span><kbd>/</kbd> Search</span>
+            </div>
 
-        <div class="social-row">
-            <a href="mailto:pyaesone.perfect2014@gmail.com" class="social-link glass-panel" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-            <a href="https://www.linkedin.com/in/pyaesonep/" target="_blank" class="social-link glass-panel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-            <a href="https://github.com/pyaesonep" target="_blank" class="social-link glass-panel" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+            <div class="social-row">
+                <a href="mailto:pyaesone.perfect2014@gmail.com" class="social-link glass-panel" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+                <a href="https://www.linkedin.com/in/pyaesonep/" target="_blank" class="social-link glass-panel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="https://github.com/pyaesonep" target="_blank" class="social-link glass-panel" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+            </div>
         </div>
     </div>
 
@@ -2103,29 +2178,32 @@
         function setupBottomSheet() {
             const sheet = document.getElementById('bottom-sheet');
             const handle = document.getElementById('sheet-handle');
-            let startY, startHeight, isSheetDragging = false;
+            let startY, isSheetDragging = false;
 
             handle.addEventListener('touchstart', (e) => {
                 isSheetDragging = true;
                 startY = e.touches[0].clientY;
-                startHeight = sheet.offsetHeight;
             }, { passive: true });
 
             document.addEventListener('touchmove', (e) => {
                 if (!isSheetDragging) return;
                 const deltaY = startY - e.touches[0].clientY;
-                const newHeight = Math.min(Math.max(startHeight + deltaY, 70), window.innerHeight * 0.5);
                 
-                if (deltaY < -50) {
-                    sheet.classList.add('collapsed');
-                } else if (deltaY > 50) {
-                    sheet.classList.remove('collapsed');
+                if (deltaY < -30) {
+                    sheet.classList.remove('expanded');
+                } else if (deltaY > 30) {
+                    sheet.classList.add('expanded');
                 }
             }, { passive: true });
 
             document.addEventListener('touchend', () => {
                 isSheetDragging = false;
             });
+        }
+
+        function toggleBottomSheet() {
+            const sheet = document.getElementById('bottom-sheet');
+            sheet.classList.toggle('expanded');
         }
 
         // ============================================
@@ -2137,25 +2215,36 @@
                 icon: 'fa-brain',
                 title: 'Welcome!',
                 description: 'This 3D visualization shows my journey from medical student to AI engineer. Each glowing sphere is a skill.',
-                target: null
+                target: null,
+                action: null
             },
             {
                 icon: 'fa-hand-pointer',
                 title: 'Explore',
                 description: 'Drag to rotate, pinch to zoom, and tap any node to learn more.',
-                target: '#canvas-container'
+                target: '#canvas-container',
+                action: null
             },
             {
                 icon: 'fa-bolt',
                 title: 'Forward Pass',
-                description: 'Tap this button to see data flow through my skills like a neural network!',
-                target: '#pulse-btn'
+                description: 'Expand the panel and tap Forward Pass to see data flow through my skills!',
+                target: '#bottom-sheet',
+                action: () => document.getElementById('bottom-sheet').classList.add('expanded')
             },
             {
                 icon: 'fa-route',
                 title: 'Trace Paths',
-                description: 'Use the path tracer to see how any two skills connect.',
-                target: isMobile ? '#pathFab' : '#path-toggle-btn'
+                description: 'Use the path tracer button to see how any two skills connect.',
+                target: isMobile ? '#pathFab' : '#path-toggle-btn',
+                action: () => document.getElementById('bottom-sheet').classList.remove('expanded')
+            },
+            {
+                icon: 'fa-clock-rotate-left',
+                title: 'Timeline View',
+                description: 'Switch to timeline view to see my journey chronologically from 2015 to 2026.',
+                target: isMobile ? '#viewFab' : '#timelineViewBtn',
+                action: null
             }
         ];
 
@@ -2180,6 +2269,11 @@
             document.getElementById('onboarding-title').textContent = step.title;
             document.getElementById('onboarding-description').textContent = step.description;
             
+            // Execute step action if present
+            if (step.action) {
+                step.action();
+            }
+            
             document.querySelectorAll('.onboarding-step').forEach((el, i) => {
                 el.classList.toggle('active', i === stepIndex);
             });
@@ -2189,15 +2283,18 @@
             
             const highlight = document.getElementById('onboarding-highlight');
             if (step.target && stepIndex > 0) {
-                const targetEl = document.querySelector(step.target);
-                if (targetEl) {
-                    const rect = targetEl.getBoundingClientRect();
-                    highlight.style.left = (rect.left - 8) + 'px';
-                    highlight.style.top = (rect.top - 8) + 'px';
-                    highlight.style.width = (rect.width + 16) + 'px';
-                    highlight.style.height = (rect.height + 16) + 'px';
-                    highlight.classList.add('visible');
-                }
+                // Small delay to let any action complete
+                setTimeout(() => {
+                    const targetEl = document.querySelector(step.target);
+                    if (targetEl) {
+                        const rect = targetEl.getBoundingClientRect();
+                        highlight.style.left = (rect.left - 8) + 'px';
+                        highlight.style.top = (rect.top - 8) + 'px';
+                        highlight.style.width = (rect.width + 16) + 'px';
+                        highlight.style.height = (rect.height + 16) + 'px';
+                        highlight.classList.add('visible');
+                    }
+                }, 100);
             } else {
                 highlight.classList.remove('visible');
             }
