@@ -1,0 +1,3635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pyae Sone | Neural Network Portfolio</title>
+    <meta name="description" content="Interactive 3D neural network portfolio of Pyae Sone - AI/ML Engineer, from medical background to tech innovator.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+    <style>
+        /* ============================================
+           MOBILE-FIRST CSS
+           Base styles are for mobile, enhanced via min-width
+           ============================================ */
+        
+        :root {
+            --primary: #7c3aed;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-glass: rgba(255, 255, 255, 0.6);
+            
+            --text-primary: #18181b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+            
+            --border: rgba(0, 0, 0, 0.1);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.15);
+            --shadow-glow: 0 0 30px rgba(124, 58, 237, 0.3);
+            
+            --gradient-primary: linear-gradient(135deg, #7c3aed, #ec4899);
+            
+            --color-input: #f43f5e;
+            --color-hidden1: #f59e0b;
+            --color-hidden2: #06b6d4;
+            --color-hidden3: #8b5cf6;
+            --color-output: #10b981;
+            
+            /* Mobile-first spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            
+            /* Safe area for notched phones */
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            --safe-left: env(safe-area-inset-left);
+            --safe-right: env(safe-area-inset-right);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #030305;
+            --bg-secondary: #0a0a0f;
+            --bg-card: rgba(10, 10, 20, 0.85);
+            --bg-glass: rgba(10, 10, 20, 0.6);
+            
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.7);
+            --shadow-glow: 0 0 40px rgba(0, 240, 255, 0.2);
+            
+            --color-input: #ff0055;
+            --color-hidden1: #ff9500;
+            --color-hidden2: #00f0ff;
+            --color-hidden3: #bf00ff;
+            --color-output: #00ff88;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            /* Prevent pull-to-refresh on mobile */
+            overscroll-behavior: none;
+        }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            transition: background 0.5s ease, color 0.3s ease;
+            /* Prevent text selection on drag */
+            -webkit-user-select: none;
+            user-select: none;
+            /* Smoother touch scrolling */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        ::selection { background: var(--primary); color: white; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+
+        /* ============================================
+           CANVAS - Mobile Base
+           ============================================ */
+        #canvas-container { 
+            position: fixed; 
+            inset: 0; 
+            z-index: 1; 
+            touch-action: none; /* Prevent browser gestures */
+        }
+
+        /* ============================================
+           GLASS PANEL - Mobile Base
+           ============================================ */
+        .glass-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        /* ============================================
+           UI LAYER - Mobile Base
+           ============================================ */
+        #ui-layer {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            padding-top: calc(var(--spacing-md) + var(--safe-top));
+            pointer-events: none;
+        }
+
+        .interactive { pointer-events: auto; }
+
+        /* ============================================
+           HEADER - Mobile Base
+           ============================================ */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeSlideDown 0.6s ease-out;
+        }
+
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-section h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .logo-section h1 .dot {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline { display: none; } /* Hidden on mobile */
+
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 600;
+            padding: 0.3rem 0.6rem;
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 100px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        [data-theme="dark"] .badge {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+            color: #00f0ff;
+        }
+
+        /* Header Right - Mobile */
+        .header-right { 
+            display: flex; 
+            align-items: center; 
+            gap: var(--spacing-xs); 
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            /* Better touch target */
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: var(--primary);
+            color: white;
+        }
+
+        .icon-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        [data-theme="dark"] .icon-btn.active {
+            background: #00f0ff;
+            border-color: #00f0ff;
+            color: black;
+        }
+
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
+        [data-theme="dark"] .sun-icon { display: block; }
+        [data-theme="dark"] .moon-icon { display: none; }
+
+        /* Nav hidden on mobile - use bottom sheet instead */
+        .nav-center { display: none; }
+
+        /* ============================================
+           BOTTOM SHEET - Mobile Primary Navigation
+           ============================================ */
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            border-radius: 20px 20px 0 0;
+            padding: var(--spacing-md);
+            padding-bottom: calc(var(--spacing-md) + var(--safe-bottom));
+            z-index: 100;
+            max-height: 50vh;
+            overflow-y: auto;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .bottom-sheet.collapsed {
+            transform: translateY(calc(100% - 70px - var(--safe-bottom)));
+        }
+
+        .bottom-sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            margin: 0 auto var(--spacing-sm);
+            opacity: 0.5;
+        }
+
+        .bottom-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .bottom-sheet-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .bottom-sheet-title .highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        [data-theme="dark"] .bottom-sheet-title .highlight {
+            background: linear-gradient(135deg, #00f0ff, #bf00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        /* Quick Actions - Mobile */
+        .quick-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            flex: 1;
+            min-width: calc(50% - var(--spacing-xs));
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            /* Touch feedback */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quick-btn:active { transform: scale(0.97); }
+
+        .quick-btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        [data-theme="dark"] .quick-btn-primary {
+            background: linear-gradient(135deg, #00f0ff, #00a8ff);
+            color: black;
+        }
+
+        .quick-btn-secondary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        /* Navigation Tabs - Mobile */
+        .nav-tabs {
+            display: flex;
+            gap: var(--spacing-xs);
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 0.6rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .nav-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        [data-theme="dark"] .nav-tab.active {
+            background: linear-gradient(135deg, #00f0ff, #00a8ff);
+            color: black;
+        }
+
+        /* Social Links - Mobile */
+        .social-row {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid var(--border);
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .social-link:active {
+            transform: scale(0.95);
+            color: var(--primary);
+        }
+
+        /* ============================================
+           FLOATING ACTION BUTTONS - Mobile
+           ============================================ */
+        .fab-container {
+            position: fixed;
+            right: var(--spacing-md);
+            bottom: calc(70px + var(--safe-bottom) + var(--spacing-md));
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            z-index: 90;
+        }
+
+        .fab {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .fab:active { transform: scale(0.9); }
+
+        .fab.active { box-shadow: 0 0 20px rgba(124, 58, 237, 0.5); }
+        [data-theme="dark"] .fab.active { box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); }
+
+        /* ============================================
+           SEARCH OVERLAY - Mobile Optimized
+           ============================================ */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 200;
+            padding: var(--spacing-md);
+            padding-top: calc(var(--spacing-md) + var(--safe-top));
+            display: none;
+            flex-direction: column;
+        }
+
+        .search-overlay.visible { display: flex; }
+
+        .search-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .search-back {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem; /* Prevents zoom on iOS */
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .search-input:focus { border-color: var(--primary); }
+        [data-theme="dark"] .search-input:focus { border-color: #00f0ff; }
+
+        .search-results {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .search-result-item:active { background: rgba(124, 58, 237, 0.1); }
+
+        .search-result-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .search-result-info { flex: 1; min-width: 0; }
+
+        .search-result-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .search-result-layer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ============================================
+           PATH TRACER - Mobile Full Screen
+           ============================================ */
+        .path-tracer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 200;
+            padding: var(--spacing-md);
+            padding-top: calc(var(--spacing-md) + var(--safe-top));
+            display: none;
+            flex-direction: column;
+        }
+
+        .path-tracer.visible { display: flex; }
+
+        .path-tracer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .path-tracer-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .path-tracer-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preset-paths {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .preset-path-btn {
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .preset-path-btn:active { border-color: var(--primary); color: var(--primary); }
+
+        .path-selectors {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .path-selector label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .path-selector select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem; /* Prevents zoom */
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .path-arrow-center {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            padding: var(--spacing-xs) 0;
+        }
+
+        [data-theme="dark"] .path-arrow-center { color: #00f0ff; }
+
+        .path-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .path-btn {
+            flex: 1;
+            padding: 0.85rem;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .path-btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        [data-theme="dark"] .path-btn-primary {
+            background: linear-gradient(135deg, #00f0ff, #00a8ff);
+            color: black;
+        }
+
+        .path-btn-secondary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .path-result {
+            flex: 1;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .path-result-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .path-nodes {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .path-node-chip {
+            padding: 0.5rem 0.75rem;
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        [data-theme="dark"] .path-node-chip {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.2);
+            color: #00f0ff;
+        }
+
+        .path-arrow-small { color: var(--text-muted); font-size: 0.8rem; }
+
+        /* ============================================
+           INFO PANEL - Mobile Bottom Sheet Style
+           ============================================ */
+        .info-panel {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-height: 75vh;
+            z-index: 300;
+            padding: var(--spacing-md);
+            padding-bottom: calc(var(--spacing-lg) + var(--safe-bottom));
+            border-radius: 20px 20px 0 0;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .info-panel.open { transform: translateY(0); }
+
+        .info-panel-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            margin: 0 auto var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        .info-close {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+            padding-right: 40px; /* Space for close button */
+        }
+
+        .info-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .info-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        [data-theme="dark"] .info-subtitle { color: #00f0ff; }
+
+        .info-accent-line {
+            width: 2.5rem;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            margin-top: 0.4rem;
+        }
+
+        [data-theme="dark"] .info-accent-line { background: linear-gradient(90deg, #00f0ff, #bf00ff); }
+
+        .info-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .info-section { margin-bottom: var(--spacing-md); }
+
+        .info-section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .info-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .info-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 0.3rem 0.6rem;
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 6px;
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .info-tag {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.2);
+            color: #00f0ff;
+        }
+
+        .info-connections {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .info-connection {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.6rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+        }
+
+        .connection-name { font-size: 0.8rem; }
+        .connection-weight {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .activation-meter {
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .activation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+        }
+
+        .activation-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .activation-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        [data-theme="dark"] .activation-value { color: #00f0ff; }
+
+        .activation-bar {
+            height: 5px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .activation-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        [data-theme="dark"] .activation-fill { background: linear-gradient(90deg, #00f0ff, #bf00ff); }
+
+        .share-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .share-link-btn:active { border-color: var(--primary); color: var(--primary); }
+        .share-link-btn.copied { background: var(--success); border-color: var(--success); color: white; }
+
+        /* ============================================
+           ONBOARDING - Mobile Optimized
+           ============================================ */
+        .onboarding-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .onboarding-overlay.visible { opacity: 1; pointer-events: auto; }
+
+        .onboarding-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: var(--spacing-lg);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .onboarding-overlay.visible .onboarding-card { transform: scale(1) translateY(0); }
+
+        .onboarding-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto var(--spacing-md);
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        [data-theme="dark"] .onboarding-icon { background: linear-gradient(135deg, #00f0ff, #bf00ff); }
+
+        .onboarding-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .onboarding-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .onboarding-steps {
+            display: flex;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .onboarding-step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .onboarding-step.active {
+            background: var(--primary);
+            width: 20px;
+            border-radius: 4px;
+        }
+
+        [data-theme="dark"] .onboarding-step.active { background: #00f0ff; }
+
+        .onboarding-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: center;
+        }
+
+        .onboarding-btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .onboarding-btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        [data-theme="dark"] .onboarding-btn-primary {
+            background: linear-gradient(135deg, #00f0ff, #00a8ff);
+            color: black;
+        }
+
+        .onboarding-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .onboarding-skip {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .onboarding-highlight {
+            position: fixed;
+            border: 3px solid var(--primary);
+            border-radius: 16px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+            pointer-events: none;
+            z-index: 8999;
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .onboarding-highlight.visible { opacity: 1; }
+
+        [data-theme="dark"] .onboarding-highlight { border-color: #00f0ff; }
+
+        /* ============================================
+           LOADING SCREEN - Mobile
+           ============================================ */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
+        }
+
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+
+        .loading-logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-md);
+        }
+
+        [data-theme="dark"] .loading-logo {
+            background: linear-gradient(135deg, #00f0ff, #bf00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .loading-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .loading-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: loadingPulse 1.2s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(1) { background: var(--color-input); animation-delay: 0s; }
+        .loading-dot:nth-child(2) { background: var(--color-hidden1); animation-delay: 0.1s; }
+        .loading-dot:nth-child(3) { background: var(--color-hidden2); animation-delay: 0.2s; }
+        .loading-dot:nth-child(4) { background: var(--color-hidden3); animation-delay: 0.3s; }
+        .loading-dot:nth-child(5) { background: var(--color-output); animation-delay: 0.4s; }
+
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        /* ============================================
+           TOOLTIP - Hidden on Mobile (use tap instead)
+           ============================================ */
+        #tooltip { display: none; }
+
+        /* ============================================
+           LEGEND - Hidden on Mobile
+           ============================================ */
+        .legend { display: none; }
+
+        /* ============================================
+           TABLET BREAKPOINT (min-width: 768px)
+           ============================================ */
+        @media (min-width: 768px) {
+            :root {
+                --spacing-md: 1.25rem;
+                --spacing-lg: 2rem;
+            }
+
+            .logo-section h1 { font-size: 2rem; }
+
+            .tagline {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-top: 0.5rem;
+            }
+
+            .divider-line { width: 2rem; height: 1px; background: var(--text-muted); }
+
+            .typewriter {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            .typewriter .cursor {
+                color: var(--primary);
+                animation: blink 1s step-end infinite;
+            }
+
+            [data-theme="dark"] .typewriter .cursor { color: #00f0ff; }
+
+            @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+            .bottom-sheet {
+                max-height: 40vh;
+            }
+
+            .quick-btn {
+                min-width: auto;
+                flex: none;
+                padding: 0.75rem 1.25rem;
+            }
+
+            .preset-paths {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .preset-path-btn {
+                flex: none;
+            }
+
+            .path-selectors {
+                flex-direction: row;
+                align-items: flex-end;
+                gap: var(--spacing-md);
+            }
+
+            .path-selector { flex: 1; }
+
+            .path-arrow-center {
+                display: none;
+            }
+
+            /* Show tooltip on tablet */
+            #tooltip {
+                display: block;
+                position: fixed;
+                z-index: 2000;
+                padding: 0.5rem 0.85rem;
+                border-radius: 8px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                color: var(--primary);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                pointer-events: none;
+                opacity: 0;
+                transform: translateY(5px);
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+
+            [data-theme="dark"] #tooltip { color: #00f0ff; }
+
+            #tooltip.visible { opacity: 1; transform: translateY(0); }
+
+            .tooltip-tag { color: var(--text-muted); margin-left: 0.5rem; }
+
+            .info-panel {
+                left: auto;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                max-height: 100%;
+                width: 380px;
+                border-radius: 20px 0 0 20px;
+                transform: translateX(100%);
+            }
+
+            .info-panel.open { transform: translateX(0); }
+
+            .info-panel-handle { display: none; }
+
+            .onboarding-card {
+                padding: 2rem;
+            }
+
+            .onboarding-title { font-size: 1.6rem; }
+        }
+
+        /* ============================================
+           DESKTOP BREAKPOINT (min-width: 1024px)
+           ============================================ */
+        @media (min-width: 1024px) {
+            :root {
+                --spacing-lg: 2.5rem;
+            }
+
+            .logo-section h1 { font-size: 2.5rem; }
+
+            /* Show desktop nav */
+            .nav-center {
+                display: flex;
+                gap: 0.5rem;
+                padding: 0.35rem;
+                border-radius: 100px;
+            }
+
+            .nav-center button {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                padding: 0.5rem 1rem;
+                background: transparent;
+                border: none;
+                color: var(--text-secondary);
+                border-radius: 100px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+            }
+
+            .nav-center button:hover,
+            .nav-center button.active {
+                background: var(--gradient-primary);
+                color: white;
+            }
+
+            .icon-btn {
+                width: 44px;
+                height: 44px;
+            }
+
+            .icon-btn:hover {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+                transform: scale(1.05);
+            }
+
+            [data-theme="dark"] .icon-btn:hover {
+                background: #00f0ff;
+                border-color: #00f0ff;
+                color: black;
+            }
+
+            /* Convert bottom sheet to sidebar */
+            .bottom-sheet {
+                position: fixed;
+                top: 6.5rem;
+                left: var(--spacing-lg);
+                right: auto;
+                bottom: var(--spacing-lg);
+                width: 320px;
+                max-height: none;
+                border-radius: 20px;
+                transform: none;
+                padding: var(--spacing-md);
+                display: flex;
+                flex-direction: column;
+            }
+
+            .bottom-sheet.collapsed { transform: none; }
+
+            .bottom-sheet-handle { display: none; }
+
+            /* Hide FAB on desktop */
+            .fab-container { display: none; }
+
+            /* Search as dropdown instead of fullscreen */
+            .search-overlay {
+                position: fixed;
+                top: 5.5rem;
+                right: var(--spacing-lg);
+                left: auto;
+                bottom: auto;
+                width: 320px;
+                border-radius: 16px;
+                padding: var(--spacing-sm);
+                max-height: 400px;
+            }
+
+            .search-header { display: none; }
+
+            .search-input-wrapper {
+                margin-bottom: var(--spacing-sm);
+            }
+
+            /* Path tracer as dropdown */
+            .path-tracer {
+                position: fixed;
+                top: 5.5rem;
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+                bottom: auto;
+                width: 500px;
+                border-radius: 16px;
+                padding: var(--spacing-md);
+                max-height: 500px;
+            }
+
+            .path-tracer.visible {
+                display: flex;
+                transform: translateX(-50%);
+            }
+
+            /* View toggle buttons */
+            .view-toggle {
+                position: fixed;
+                top: 50%;
+                right: var(--spacing-lg);
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                z-index: 100;
+            }
+
+            .view-btn {
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .view-btn:hover { transform: scale(1.1); }
+            .view-btn.active { box-shadow: 0 0 20px rgba(124, 58, 237, 0.5); }
+            [data-theme="dark"] .view-btn.active { box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); }
+
+            /* Show legend */
+            .legend {
+                display: block;
+                position: fixed;
+                bottom: var(--spacing-lg);
+                right: var(--spacing-lg);
+                padding: 1rem;
+                border-radius: 16px;
+                z-index: 100;
+                max-width: 180px;
+            }
+
+            .legend-title {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.6rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                margin-bottom: 0.75rem;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            .legend-color { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+            /* Timeline bar */
+            .timeline-bar {
+                position: fixed;
+                bottom: var(--spacing-lg);
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1.5rem;
+                border-radius: 100px;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.5s ease;
+                z-index: 100;
+            }
+
+            .timeline-bar.visible { opacity: 1; pointer-events: auto; }
+
+            .timeline-year {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                padding: 0.5rem 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .timeline-year::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                right: 0;
+                width: 20px;
+                height: 2px;
+                background: var(--border);
+            }
+
+            .timeline-year:last-child::after { display: none; }
+
+            .timeline-year:hover,
+            .timeline-year.active { color: var(--primary); }
+
+            [data-theme="dark"] .timeline-year:hover,
+            [data-theme="dark"] .timeline-year.active { color: #00f0ff; }
+
+            .timeline-year.active::before {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 6px;
+                height: 6px;
+                background: var(--primary);
+                border-radius: 50%;
+            }
+
+            [data-theme="dark"] .timeline-year.active::before { background: #00f0ff; }
+
+            /* Stats bar */
+            .stats-bar {
+                position: absolute;
+                top: 5.5rem;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 1.5rem;
+                padding: 0.6rem 1.25rem;
+                border-radius: 100px;
+            }
+
+            .stat-item { display: flex; align-items: center; gap: 0.4rem; }
+
+            .stat-value {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: var(--primary);
+            }
+
+            [data-theme="dark"] .stat-value { color: #00f0ff; }
+
+            .stat-label {
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+            }
+
+            /* Keyboard hints */
+            .keyboard-hints {
+                display: flex;
+                flex-direction: column;
+                gap: 0.3rem;
+                margin-top: 0.75rem;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--border);
+            }
+
+            .keyboard-hints span {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.6rem;
+                color: var(--text-muted);
+            }
+
+            .keyboard-hints kbd {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 0.3rem;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                font-size: 0.55rem;
+                margin-right: 0.3rem;
+            }
+
+            .info-panel {
+                width: 420px;
+            }
+        }
+
+        /* ============================================
+           LARGE DESKTOP (min-width: 1280px)
+           ============================================ */
+        @media (min-width: 1280px) {
+            .bottom-sheet {
+                width: 360px;
+            }
+
+            .hero-description {
+                display: block;
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin-bottom: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading">
+        <div class="loading-logo">PS</div>
+        <p class="loading-text">Initializing Neural Interface</p>
+        <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+    </div>
+
+    <!-- Onboarding Overlay -->
+    <div class="onboarding-overlay" id="onboarding-overlay">
+        <div class="onboarding-card">
+            <button class="onboarding-skip" onclick="skipOnboarding()">Skip tour</button>
+            <div class="onboarding-icon" id="onboarding-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <h2 class="onboarding-title" id="onboarding-title">Welcome to My Neural Network</h2>
+            <p class="onboarding-description" id="onboarding-description">
+                This interactive 3D visualization represents my journey from medical student to AI engineer.
+            </p>
+            <div class="onboarding-steps">
+                <div class="onboarding-step active" data-step="0"></div>
+                <div class="onboarding-step" data-step="1"></div>
+                <div class="onboarding-step" data-step="2"></div>
+                <div class="onboarding-step" data-step="3"></div>
+            </div>
+            <div class="onboarding-buttons">
+                <button class="onboarding-btn onboarding-btn-secondary" id="onboarding-prev" onclick="prevOnboardingStep()" style="display: none;">Back</button>
+                <button class="onboarding-btn onboarding-btn-primary" id="onboarding-next" onclick="nextOnboardingStep()">Let's explore</button>
+            </div>
+        </div>
+    </div>
+    <div class="onboarding-highlight" id="onboarding-highlight"></div>
+
+    <!-- Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Layer -->
+    <div id="ui-layer">
+        <!-- Header -->
+        <header class="interactive">
+            <div class="logo-section">
+                <h1>PYAE SONE<span class="dot">.</span></h1>
+                <div class="tagline">
+                    <span class="badge">Comp Eng @ SP</span>
+                    <span class="divider-line"></span>
+                    <span class="typewriter">
+                        <span id="typing-text"></span><span class="cursor">|</span>
+                    </span>
+                </div>
+            </div>
+
+            <nav class="nav-center glass-panel interactive" id="nav-links">
+                <button onclick="cameraToSection('input')" class="active">Background</button>
+                <button onclick="cameraToSection('hidden')">Skills</button>
+                <button onclick="cameraToSection('output')">Projects</button>
+            </nav>
+
+            <div class="header-right">
+                <button class="icon-btn interactive" onclick="toggleSearch()" aria-label="Search" id="search-toggle-btn">
+                    <i class="fa-solid fa-search"></i>
+                </button>
+                <button class="icon-btn interactive" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fa-solid fa-sun sun-icon"></i>
+                    <i class="fa-solid fa-moon moon-icon"></i>
+                </button>
+                <button class="icon-btn interactive" onclick="startOnboarding()" aria-label="Help">
+                    <i class="fa-solid fa-question"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Bar (Desktop only) -->
+        <div class="stats-bar glass-panel interactive" id="stats-bar">
+            <div class="stat-item"><span class="stat-value">24</span><span class="stat-label">Nodes</span></div>
+            <div class="stat-item"><span class="stat-value">5</span><span class="stat-label">Layers</span></div>
+            <div class="stat-item"><span class="stat-value">98%</span><span class="stat-label">DNN</span></div>
+            <div class="stat-item"><span class="stat-value">3.92</span><span class="stat-label">GPA</span></div>
+        </div>
+    </div>
+
+    <!-- FABs (Mobile) -->
+    <div class="fab-container interactive">
+        <button class="fab glass-panel" id="pathFab" onclick="togglePathTracer()" aria-label="Path tracer">
+            <i class="fa-solid fa-route"></i>
+        </button>
+        <button class="fab glass-panel" id="viewFab" onclick="toggleViewMode()" aria-label="Toggle view">
+            <i class="fa-solid fa-clock-rotate-left" id="viewFabIcon"></i>
+        </button>
+    </div>
+
+    <!-- Bottom Sheet (Mobile Primary) -->
+    <div class="bottom-sheet glass-panel interactive" id="bottom-sheet">
+        <div class="bottom-sheet-handle" id="sheet-handle"></div>
+        <div class="bottom-sheet-header">
+            <h2 class="bottom-sheet-title">I am a <span class="highlight">Neural Network</span></h2>
+        </div>
+        <p class="hero-description">Explore my journey from medical student to AI engineer. Each node is a skill, each connection shows synergy.</p>
+        
+        <div class="quick-actions">
+            <button class="quick-btn quick-btn-primary" onclick="triggerPulse()" id="pulse-btn">
+                <i class="fa-solid fa-bolt"></i> Forward Pass
+            </button>
+            <button class="quick-btn quick-btn-secondary" onclick="toggleAutoRotate()" id="autoRotateBtn">
+                <i class="fa-solid fa-rotate"></i> Auto Rotate
+            </button>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="cameraToSection('input')">Background</button>
+            <button class="nav-tab" onclick="cameraToSection('hidden')">Skills</button>
+            <button class="nav-tab" onclick="cameraToSection('output')">Projects</button>
+        </div>
+
+        <div class="keyboard-hints">
+            <span><kbd>F</kbd> Forward Pass</span>
+            <span><kbd>P</kbd> Path Tracer</span>
+            <span><kbd>T</kbd> Timeline View</span>
+            <span><kbd>/</kbd> Search</span>
+        </div>
+
+        <div class="social-row">
+            <a href="mailto:pyaesone.perfect2014@gmail.com" class="social-link glass-panel" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+            <a href="https://www.linkedin.com/in/pyaesonep/" target="_blank" class="social-link glass-panel" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="https://github.com/pyaesonep" target="_blank" class="social-link glass-panel" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        </div>
+    </div>
+
+    <!-- View Toggle (Desktop) -->
+    <div class="view-toggle interactive">
+        <button class="view-btn glass-panel icon-btn active" id="networkViewBtn" onclick="setView('network')" title="Network View">
+            <i class="fa-solid fa-diagram-project"></i>
+        </button>
+        <button class="view-btn glass-panel icon-btn" id="timelineViewBtn" onclick="setView('timeline')" title="Timeline View">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+        </button>
+    </div>
+
+    <!-- Timeline Bar (Desktop) -->
+    <div class="timeline-bar glass-panel interactive" id="timeline-bar">
+        <div class="timeline-year" data-year="2015" onclick="focusYear(2015)">2015</div>
+        <div class="timeline-year" data-year="2019" onclick="focusYear(2019)">2019</div>
+        <div class="timeline-year" data-year="2021" onclick="focusYear(2021)">2021</div>
+        <div class="timeline-year" data-year="2023" onclick="focusYear(2023)">2023</div>
+        <div class="timeline-year active" data-year="2025" onclick="focusYear(2025)">2025</div>
+        <div class="timeline-year" data-year="2026" onclick="focusYear(2026)">2026</div>
+    </div>
+
+    <!-- Legend (Desktop) -->
+    <aside class="legend glass-panel interactive" id="legend">
+        <div class="legend-title">Network Layers</div>
+        <div class="legend-item"><div class="legend-color" id="legend-input"></div><span>Input (Background)</span></div>
+        <div class="legend-item"><div class="legend-color" id="legend-hidden1"></div><span>Hidden 1 (Foundation)</span></div>
+        <div class="legend-item"><div class="legend-color" id="legend-hidden2"></div><span>Hidden 2 (Skills)</span></div>
+        <div class="legend-item"><div class="legend-color" id="legend-hidden3"></div><span>Hidden 3 (Expertise)</span></div>
+        <div class="legend-item"><div class="legend-color" id="legend-output"></div><span>Output (Projects)</span></div>
+    </aside>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay glass-panel" id="search-overlay">
+        <div class="search-header">
+            <button class="search-back" onclick="closeSearch()"><i class="fa-solid fa-arrow-left"></i></button>
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" class="search-input" id="node-search" placeholder="Search skills, projects..." autocomplete="off">
+            </div>
+        </div>
+        <div class="search-input-wrapper" style="display: none;" id="desktop-search-input">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" class="search-input" id="node-search-desktop" placeholder="Search skills, projects..." autocomplete="off">
+        </div>
+        <div class="search-results" id="search-results"></div>
+    </div>
+
+    <!-- Path Tracer -->
+    <div class="path-tracer glass-panel" id="path-tracer">
+        <div class="path-tracer-header">
+            <span class="path-tracer-title"><i class="fa-solid fa-route"></i> Skill Path Tracer</span>
+            <button class="path-tracer-close" onclick="togglePathTracer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="preset-paths">
+            <button class="preset-path-btn" onclick="setPresetPath('medical', 'healthcare_ai')">🏥 Medical → Healthcare AI</button>
+            <button class="preset-path-btn" onclick="setPresetPath('resilience', 'dnn_scratch')">💪 Resilience → DNN Project</button>
+            <button class="preset-path-btn" onclick="setPresetPath('excellence', 'ai_ctf')">🏆 Excellence → AI CTF</button>
+        </div>
+        <div class="path-selectors">
+            <div class="path-selector">
+                <label>Start Node</label>
+                <select id="path-start"></select>
+            </div>
+            <div class="path-arrow-center"><i class="fa-solid fa-arrow-down"></i></div>
+            <div class="path-selector">
+                <label>End Node</label>
+                <select id="path-end"></select>
+            </div>
+        </div>
+        <div class="path-actions">
+            <button class="path-btn path-btn-primary" onclick="tracePath()"><i class="fa-solid fa-bolt"></i> Trace</button>
+            <button class="path-btn path-btn-secondary" onclick="clearPath()"><i class="fa-solid fa-eraser"></i> Clear</button>
+        </div>
+        <div class="path-result" id="path-result" style="display: none;">
+            <div class="path-result-label">Path Found</div>
+            <div class="path-nodes" id="path-nodes"></div>
+        </div>
+    </div>
+
+    <!-- Tooltip (Desktop) -->
+    <div id="tooltip" class="glass-panel">
+        <span id="tooltip-name"></span>
+        <span class="tooltip-tag" id="tooltip-tag"></span>
+    </div>
+
+    <!-- Info Panel -->
+    <aside class="info-panel glass-panel" id="info-panel">
+        <div class="info-panel-handle"></div>
+        <button class="info-close interactive" onclick="closePanel()"><i class="fa-solid fa-xmark"></i></button>
+        <div id="panel-content"></div>
+    </aside>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        
+        const config = {
+            layerGap: 10,
+            nodeSpacing: 3.2,
+            nodeSize: 0.55,
+            particleCount: window.innerWidth < 768 ? 600 : 1200, // Reduce particles on mobile
+            dataPacketSpeed: 0.018
+        };
+
+        const networkData = {
+            layers: [
+                {
+                    id: 'input', label: 'Input Layer', colorVar: '--color-input',
+                    nodes: [
+                        { id: 'medical', name: 'Medical Background', icon: 'fa-user-md', description: '5 years of MBBS studies at University of Medicine 1, Yangon. Clinical rotations, rural healthcare mission.', tags: ['MBBS', 'Clinical', 'Healthcare'], activation: 0.95, year: 2015 },
+                        { id: 'myanmar_heritage', name: 'Myanmar Heritage', icon: 'fa-earth-asia', description: '"AI လေ့လာကြမယ်" initiative making AI education accessible to Myanmar students.', tags: ['Community', 'Education', 'Burmese'], activation: 0.9, year: 2015 },
+                        { id: 'resilience', name: 'Resilience', icon: 'fa-mountain', description: 'Self-funding education. Made principled decision during Myanmar\'s 2021 political crisis.', tags: ['Self-Funded', 'Determination'], activation: 0.98, year: 2021 },
+                        { id: 'excellence', name: 'Academic Excellence', icon: 'fa-award', description: 'GPA 3.92/4.00 at Singapore Polytechnic. Director\'s Honour Roll 2024 & 2025.', tags: ['GPA 3.92', 'Director\'s Honour Roll'], activation: 0.98, year: 2023 }
+                    ]
+                },
+                {
+                    id: 'hidden1', label: 'Foundation Layer', colorVar: '--color-hidden1',
+                    nodes: [
+                        { id: 'python', name: 'Python', icon: 'fa-brands fa-python', description: 'Primary language for ML, data science, and backend. NumPy, Pandas, FastAPI.', tags: ['NumPy', 'Pandas', 'FastAPI'], activation: 0.95, year: 2023 },
+                        { id: 'math', name: 'Mathematics', icon: 'fa-square-root-variable', description: 'Engineering Mathematics, Statistics & Analytics. Linear algebra, calculus.', tags: ['Linear Algebra', 'Calculus', 'Stats'], activation: 0.9, year: 2023 },
+                        { id: 'software_eng', name: 'Software Engineering', icon: 'fa-code', description: 'OOP, Data Structures, REST APIs, Git.', tags: ['OOP', 'Git', 'REST APIs'], activation: 0.88, year: 2023 },
+                        { id: 'cloud_devops', name: 'Cloud & DevOps', icon: 'fa-cloud', description: 'Docker, Kubernetes, GCP. Dell certified.', tags: ['Docker', 'Kubernetes', 'GCP'], activation: 0.85, year: 2025 },
+                        { id: 'web_dev', name: 'Web Development', icon: 'fa-globe', description: 'React, Next.js, Flask. Meta certified.', tags: ['React', 'Next.js', 'Flask'], activation: 0.82, year: 2023 }
+                    ]
+                },
+                {
+                    id: 'hidden2', label: 'Skills Layer', colorVar: '--color-hidden2',
+                    nodes: [
+                        { id: 'machine_learning', name: 'Machine Learning', icon: 'fa-chart-line', description: 'Stanford ML Specialization. Decision Trees, Random Forest, K-Means.', tags: ['Scikit-Learn', 'Decision Trees'], activation: 0.92, year: 2025 },
+                        { id: 'deep_learning', name: 'Deep Learning', icon: 'fa-brain', description: 'DeepLearning.AI specialization. Neural Networks, CNNs.', tags: ['TensorFlow', 'Keras', 'CNNs'], activation: 0.9, year: 2025 },
+                        { id: 'nlp_llm', name: 'NLP & LLMs', icon: 'fa-comments', description: 'Hugging Face, Transformers, Prompt Engineering, RAG.', tags: ['Transformers', 'RAG'], activation: 0.85, year: 2025 },
+                        { id: 'cybersecurity', name: 'Cybersecurity', icon: 'fa-shield-halved', description: 'CrowdStrike Falcon certified. EDR, SIEM, Purple Teaming.', tags: ['CrowdStrike', 'EDR', 'SIEM'], activation: 0.89, year: 2025 },
+                        { id: 'mlops', name: 'MLOps', icon: 'fa-gears', description: 'Google Cloud MLOps certified. Vertex AI, Pipelines.', tags: ['Vertex AI', 'Pipelines'], activation: 0.85, year: 2025 }
+                    ]
+                },
+                {
+                    id: 'hidden3', label: 'Expertise Layer', colorVar: '--color-hidden3',
+                    nodes: [
+                        { id: 'devsecops', name: 'DevSecOps', icon: 'fa-lock', description: 'Supply chain security, CIS Benchmark hardening. 44%→89% compliance.', tags: ['CIS Benchmarks', 'Hardening'], activation: 0.89, year: 2025 },
+                        { id: 'healthcare_ai', name: 'Healthcare AI', icon: 'fa-heart-pulse', description: '5-year medical background + AI/ML for clinical decision support.', tags: ['Medical NLP', 'Clinical Data'], activation: 0.85, year: 2025 },
+                        { id: 'siem_integration', name: 'SIEM Integration', icon: 'fa-network-wired', description: 'CrowdStrike → Microsoft Sentinel pipeline.', tags: ['Microsoft Sentinel', 'Azure'], activation: 0.85, year: 2025 },
+                        { id: 'genai', name: 'Generative AI', icon: 'fa-wand-magic-sparkles', description: 'RAG applications, LLM integration, Responsible AI.', tags: ['RAG', 'LLMs', 'Vertex AI'], activation: 0.8, year: 2025 }
+                    ]
+                },
+                {
+                    id: 'output', label: 'Output Layer', colorVar: '--color-output',
+                    nodes: [
+                        { id: 'dnn_scratch', name: 'DNN from Scratch', icon: 'fa-microchip', description: '4-layer DNN with NumPy. ~98% accuracy. Cloud Run <50ms.', tags: ['NumPy', '98% Accuracy'], activation: 0.98, year: 2026 },
+                        { id: 'student_prediction', name: 'At-Risk Student Model', icon: 'fa-graduation-cap', description: 'ML student performance prediction. 94.6% accuracy.', tags: ['94.6% Accuracy', 'K-Means'], activation: 0.946, year: 2025 },
+                        { id: 'devsecops_project', name: 'DevSecOps @ LTA', icon: 'fa-shield-virus', description: 'Developer endpoint hardening. 44%→89% compliance.', tags: ['44%→89%', 'LTA'], activation: 0.89, year: 2025 },
+                        { id: 'edr_siem', name: 'EDR/SIEM @ LTA', icon: 'fa-satellite-dish', description: 'Next-gen EDR for modern SOC.', tags: ['CrowdStrike', 'Sentinel'], activation: 0.87, year: 2025 },
+                        { id: 'ai_education', name: 'AI Education', icon: 'fa-chalkboard-user', description: 'Teaching AI/ML to Myanmar students via social media.', tags: ['Facebook', 'TikTok', 'Myanmar'], activation: 0.85, year: 2026 },
+                        { id: 'ai_ctf', name: 'Singapore AI CTF', icon: 'fa-flag', description: 'Team AINT: 42nd/325 teams.', tags: ['42nd/325', '2426 pts'], activation: 0.82, year: 2025 }
+                    ]
+                }
+            ],
+            connections: [
+                { from: 'medical', to: 'math', strength: 0.7 },
+                { from: 'medical', to: 'python', strength: 0.6 },
+                { from: 'myanmar_heritage', to: 'web_dev', strength: 0.7 },
+                { from: 'resilience', to: 'python', strength: 0.85 },
+                { from: 'resilience', to: 'software_eng', strength: 0.8 },
+                { from: 'excellence', to: 'math', strength: 0.95 },
+                { from: 'excellence', to: 'python', strength: 0.9 },
+                { from: 'excellence', to: 'cloud_devops', strength: 0.75 },
+                { from: 'python', to: 'machine_learning', strength: 0.95 },
+                { from: 'python', to: 'deep_learning', strength: 0.95 },
+                { from: 'python', to: 'mlops', strength: 0.85 },
+                { from: 'math', to: 'machine_learning', strength: 0.95 },
+                { from: 'math', to: 'deep_learning', strength: 0.95 },
+                { from: 'math', to: 'nlp_llm', strength: 0.8 },
+                { from: 'software_eng', to: 'cybersecurity', strength: 0.75 },
+                { from: 'software_eng', to: 'mlops', strength: 0.85 },
+                { from: 'cloud_devops', to: 'mlops', strength: 0.9 },
+                { from: 'cloud_devops', to: 'cybersecurity', strength: 0.7 },
+                { from: 'web_dev', to: 'nlp_llm', strength: 0.6 },
+                { from: 'machine_learning', to: 'healthcare_ai', strength: 0.85 },
+                { from: 'machine_learning', to: 'devsecops', strength: 0.7 },
+                { from: 'deep_learning', to: 'healthcare_ai', strength: 0.9 },
+                { from: 'deep_learning', to: 'genai', strength: 0.9 },
+                { from: 'nlp_llm', to: 'genai', strength: 0.95 },
+                { from: 'nlp_llm', to: 'healthcare_ai', strength: 0.85 },
+                { from: 'cybersecurity', to: 'devsecops', strength: 0.95 },
+                { from: 'cybersecurity', to: 'siem_integration', strength: 0.95 },
+                { from: 'mlops', to: 'genai', strength: 0.8 },
+                { from: 'mlops', to: 'devsecops', strength: 0.7 },
+                { from: 'devsecops', to: 'devsecops_project', strength: 0.98 },
+                { from: 'devsecops', to: 'ai_ctf', strength: 0.7 },
+                { from: 'healthcare_ai', to: 'ai_education', strength: 0.75 },
+                { from: 'siem_integration', to: 'edr_siem', strength: 0.98 },
+                { from: 'siem_integration', to: 'devsecops_project', strength: 0.6 },
+                { from: 'genai', to: 'ai_education', strength: 0.8 },
+                { from: 'genai', to: 'ai_ctf', strength: 0.6 },
+                { from: 'deep_learning', to: 'dnn_scratch', strength: 0.98 },
+                { from: 'machine_learning', to: 'student_prediction', strength: 0.95 },
+                { from: 'mlops', to: 'dnn_scratch', strength: 0.85 },
+                { from: 'cybersecurity', to: 'edr_siem', strength: 0.9 },
+                { from: 'cybersecurity', to: 'ai_ctf', strength: 0.85 },
+                { from: 'medical', to: 'healthcare_ai', strength: 0.95 },
+                { from: 'myanmar_heritage', to: 'ai_education', strength: 0.98 },
+                { from: 'excellence', to: 'student_prediction', strength: 0.8 },
+                { from: 'resilience', to: 'devsecops_project', strength: 0.7 }
+            ]
+        };
+
+        // ============================================
+        // THREE.JS VARIABLES
+        // ============================================
+        
+        let scene, camera, renderer, raycaster, mouse;
+        let nodes = [], connections = [], dataPackets = [], orbitalRings = [], nodeLabels = [];
+        let timelineMarkers = [], timelineLines = [];
+        let particlesSystem, gridLines;
+        let time = 0;
+        
+        let hoveredNode = null, selectedNode = null;
+        let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+        let autoRotate = false;
+        let cameraAngleX = 0, cameraAngleY = 0.2, cameraDistance = 38;
+        let cameraTarget = new THREE.Vector3(0, 0, 0);
+        let targetCameraAngleX = 0, targetCameraAngleY = 0.2, targetCameraDistance = 38;
+        let targetCameraTarget = new THREE.Vector3(0, 0, 0);
+        
+        let currentView = 'network';
+        let targetPositions = {};
+        let labelsVisible = window.innerWidth >= 1024; // Labels only on desktop
+        let searchVisible = false;
+        let pathTracerVisible = false;
+        
+        // Path tracing
+        let currentPath = [];
+        let pathHighlightedNodes = [];
+        let pathHighlightedConnections = [];
+        
+        // Mobile detection
+        const isMobile = window.innerWidth < 768;
+        const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        function init() {
+            initTheme();
+            
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const bgColor = isDark ? 0x030305 : 0xf8fafc;
+            
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(bgColor);
+            scene.fog = new THREE.FogExp2(bgColor, isMobile ? 0.015 : 0.012);
+
+            camera = new THREE.PerspectiveCamera(isMobile ? 60 : 50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            updateCameraPosition();
+
+            const container = document.getElementById('canvas-container');
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: !isMobile, // Disable antialiasing on mobile for performance
+                alpha: true,
+                powerPreference: isMobile ? 'low-power' : 'high-performance'
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 2 : 2));
+            container.appendChild(renderer.domElement);
+
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(0xffffff, 1);
+            pointLight1.position.set(15, 15, 15);
+            scene.add(pointLight1);
+
+            const accentLight1 = new THREE.PointLight(isDark ? 0x00f0ff : 0x7c3aed, 4, 80);
+            accentLight1.position.set(-25, 8, 20);
+            scene.add(accentLight1);
+
+            const accentLight2 = new THREE.PointLight(isDark ? 0xbf00ff : 0xec4899, 4, 80);
+            accentLight2.position.set(30, -8, -20);
+            scene.add(accentLight2);
+
+            createGrid();
+            buildNetwork();
+            createBackgroundParticles();
+            if (!isMobile) {
+                createTimelineMarkers();
+            }
+            updateLegendColors();
+            populatePathSelectors();
+
+            // Store initial positions
+            nodes.forEach(node => {
+                targetPositions[node.userData.id] = {
+                    network: node.position.clone(),
+                    timeline: calculateTimelinePosition(node.userData)
+                };
+            });
+
+            // Events
+            window.addEventListener('resize', onWindowResize);
+            
+            // Touch events for mobile
+            container.addEventListener('touchstart', onTouchStart, { passive: false });
+            container.addEventListener('touchmove', onTouchMove, { passive: false });
+            container.addEventListener('touchend', onTouchEnd);
+            
+            // Mouse events for desktop
+            if (!isMobile) {
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mousedown', onMouseDown);
+                document.addEventListener('mouseup', onMouseUp);
+                container.addEventListener('wheel', onWheel, { passive: false });
+            }
+            
+            document.addEventListener('click', onClick);
+            document.addEventListener('keydown', onKeyDown);
+
+            setupBottomSheet();
+            setupSearch();
+            handleDeepLink();
+
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                setTimeout(() => {
+                    checkFirstVisit();
+                }, 500);
+            }, 1500);
+
+            animate();
+            if (!isMobile) {
+                typeWriterEffect();
+            }
+        }
+
+        // ============================================
+        // MOBILE BOTTOM SHEET
+        // ============================================
+
+        function setupBottomSheet() {
+            const sheet = document.getElementById('bottom-sheet');
+            const handle = document.getElementById('sheet-handle');
+            let startY, startHeight, isSheetDragging = false;
+
+            handle.addEventListener('touchstart', (e) => {
+                isSheetDragging = true;
+                startY = e.touches[0].clientY;
+                startHeight = sheet.offsetHeight;
+            }, { passive: true });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!isSheetDragging) return;
+                const deltaY = startY - e.touches[0].clientY;
+                const newHeight = Math.min(Math.max(startHeight + deltaY, 70), window.innerHeight * 0.5);
+                
+                if (deltaY < -50) {
+                    sheet.classList.add('collapsed');
+                } else if (deltaY > 50) {
+                    sheet.classList.remove('collapsed');
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchend', () => {
+                isSheetDragging = false;
+            });
+        }
+
+        // ============================================
+        // ONBOARDING - MOBILE OPTIMIZED
+        // ============================================
+
+        const onboardingSteps = [
+            {
+                icon: 'fa-brain',
+                title: 'Welcome!',
+                description: 'This 3D visualization shows my journey from medical student to AI engineer. Each glowing sphere is a skill.',
+                target: null
+            },
+            {
+                icon: 'fa-hand-pointer',
+                title: 'Explore',
+                description: 'Drag to rotate, pinch to zoom, and tap any node to learn more.',
+                target: '#canvas-container'
+            },
+            {
+                icon: 'fa-bolt',
+                title: 'Forward Pass',
+                description: 'Tap this button to see data flow through my skills like a neural network!',
+                target: '#pulse-btn'
+            },
+            {
+                icon: 'fa-route',
+                title: 'Trace Paths',
+                description: 'Use the path tracer to see how any two skills connect.',
+                target: isMobile ? '#pathFab' : '#path-toggle-btn'
+            }
+        ];
+
+        let currentOnboardingStep = 0;
+
+        function checkFirstVisit() {
+            if (!localStorage.getItem('portfolio_onboarded_v4')) {
+                startOnboarding();
+            }
+        }
+
+        function startOnboarding() {
+            currentOnboardingStep = 0;
+            showOnboardingStep(currentOnboardingStep);
+            document.getElementById('onboarding-overlay').classList.add('visible');
+        }
+
+        function showOnboardingStep(stepIndex) {
+            const step = onboardingSteps[stepIndex];
+            
+            document.getElementById('onboarding-icon').innerHTML = `<i class="fa-solid ${step.icon}"></i>`;
+            document.getElementById('onboarding-title').textContent = step.title;
+            document.getElementById('onboarding-description').textContent = step.description;
+            
+            document.querySelectorAll('.onboarding-step').forEach((el, i) => {
+                el.classList.toggle('active', i === stepIndex);
+            });
+            
+            document.getElementById('onboarding-prev').style.display = stepIndex > 0 ? 'block' : 'none';
+            document.getElementById('onboarding-next').textContent = stepIndex === onboardingSteps.length - 1 ? 'Get started!' : 'Next';
+            
+            const highlight = document.getElementById('onboarding-highlight');
+            if (step.target && stepIndex > 0) {
+                const targetEl = document.querySelector(step.target);
+                if (targetEl) {
+                    const rect = targetEl.getBoundingClientRect();
+                    highlight.style.left = (rect.left - 8) + 'px';
+                    highlight.style.top = (rect.top - 8) + 'px';
+                    highlight.style.width = (rect.width + 16) + 'px';
+                    highlight.style.height = (rect.height + 16) + 'px';
+                    highlight.classList.add('visible');
+                }
+            } else {
+                highlight.classList.remove('visible');
+            }
+        }
+
+        function nextOnboardingStep() {
+            if (currentOnboardingStep < onboardingSteps.length - 1) {
+                currentOnboardingStep++;
+                showOnboardingStep(currentOnboardingStep);
+            } else {
+                finishOnboarding();
+            }
+        }
+
+        function prevOnboardingStep() {
+            if (currentOnboardingStep > 0) {
+                currentOnboardingStep--;
+                showOnboardingStep(currentOnboardingStep);
+            }
+        }
+
+        function skipOnboarding() {
+            finishOnboarding();
+        }
+
+        function finishOnboarding() {
+            document.getElementById('onboarding-overlay').classList.remove('visible');
+            document.getElementById('onboarding-highlight').classList.remove('visible');
+            localStorage.setItem('portfolio_onboarded_v4', 'true');
+        }
+
+        // ============================================
+        // PATH TRACING
+        // ============================================
+
+        function populatePathSelectors() {
+            const startSelect = document.getElementById('path-start');
+            const endSelect = document.getElementById('path-end');
+            
+            networkData.layers.forEach(layer => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = layer.label;
+                
+                const optgroup2 = document.createElement('optgroup');
+                optgroup2.label = layer.label;
+                
+                layer.nodes.forEach(node => {
+                    const option1 = document.createElement('option');
+                    option1.value = node.id;
+                    option1.textContent = node.name;
+                    optgroup.appendChild(option1);
+                    
+                    const option2 = document.createElement('option');
+                    option2.value = node.id;
+                    option2.textContent = node.name;
+                    optgroup2.appendChild(option2);
+                });
+                
+                startSelect.appendChild(optgroup);
+                endSelect.appendChild(optgroup2);
+            });
+            
+            startSelect.value = 'medical';
+            endSelect.value = 'healthcare_ai';
+        }
+
+        function setPresetPath(startId, endId) {
+            document.getElementById('path-start').value = startId;
+            document.getElementById('path-end').value = endId;
+            tracePath();
+        }
+
+        function togglePathTracer() {
+            pathTracerVisible = !pathTracerVisible;
+            const panel = document.getElementById('path-tracer');
+            const fab = document.getElementById('pathFab');
+            
+            if (pathTracerVisible) {
+                panel.classList.add('visible');
+                if (fab) fab.classList.add('active');
+                closeSearch();
+            } else {
+                panel.classList.remove('visible');
+                if (fab) fab.classList.remove('active');
+                clearPath();
+            }
+        }
+
+        function findPath(startId, endId) {
+            const graph = {};
+            networkData.layers.forEach(layer => {
+                layer.nodes.forEach(node => {
+                    graph[node.id] = [];
+                });
+            });
+            
+            networkData.connections.forEach(conn => {
+                graph[conn.from].push(conn.to);
+                graph[conn.to].push(conn.from);
+            });
+            
+            const queue = [[startId]];
+            const visited = new Set([startId]);
+            
+            while (queue.length > 0) {
+                const path = queue.shift();
+                const current = path[path.length - 1];
+                
+                if (current === endId) return path;
+                
+                for (const neighbor of graph[current] || []) {
+                    if (!visited.has(neighbor)) {
+                        visited.add(neighbor);
+                        queue.push([...path, neighbor]);
+                    }
+                }
+            }
+            
+            return null;
+        }
+
+        function tracePath() {
+            const startId = document.getElementById('path-start').value;
+            const endId = document.getElementById('path-end').value;
+            
+            if (startId === endId) {
+                document.getElementById('path-result').style.display = 'block';
+                document.getElementById('path-nodes').innerHTML = '<span style="color: var(--text-muted)">Same node selected</span>';
+                return;
+            }
+            
+            clearPath();
+            
+            const path = findPath(startId, endId);
+            
+            if (!path) {
+                document.getElementById('path-result').style.display = 'block';
+                document.getElementById('path-nodes').innerHTML = '<span style="color: var(--text-muted)">No path found</span>';
+                return;
+            }
+            
+            currentPath = path;
+            
+            document.getElementById('path-result').style.display = 'block';
+            const pathNodesContainer = document.getElementById('path-nodes');
+            pathNodesContainer.innerHTML = path.map((nodeId, i) => {
+                const node = nodes.find(n => n.userData.id === nodeId);
+                const name = node ? node.userData.name : nodeId;
+                const arrow = i < path.length - 1 ? '<i class="fa-solid fa-arrow-right path-arrow-small"></i>' : '';
+                return `<span class="path-node-chip" onclick="selectNodeById('${nodeId}')">${name}</span>${arrow}`;
+            }).join('');
+            
+            highlightPath(path);
+        }
+
+        function highlightPath(path) {
+            nodes.forEach(node => {
+                if (!path.includes(node.userData.id)) {
+                    node.material.opacity = 0.15;
+                    node.material.emissiveIntensity = 0.1;
+                    node.userData.dimmed = true;
+                }
+            });
+            
+            connections.forEach(conn => {
+                conn.mesh.material.opacity = 0.03;
+            });
+            
+            path.forEach((nodeId, i) => {
+                setTimeout(() => {
+                    const node = nodes.find(n => n.userData.id === nodeId);
+                    if (node) {
+                        pathHighlightedNodes.push(node);
+                        node.material.opacity = 1;
+                        node.material.emissiveIntensity = 1.5;
+                        node.scale.set(1.4, 1.4, 1.4);
+                        node.userData.dimmed = false;
+                        
+                        if (i < path.length - 1) {
+                            const nextId = path[i + 1];
+                            const conn = connections.find(c => 
+                                (c.source.userData.id === nodeId && c.target.userData.id === nextId) ||
+                                (c.target.userData.id === nodeId && c.source.userData.id === nextId)
+                            );
+                            if (conn) {
+                                pathHighlightedConnections.push(conn);
+                                conn.mesh.material.opacity = 0.9;
+                                createDataPacket(conn);
+                            }
+                        }
+                        
+                        if (i === Math.floor(path.length / 2)) {
+                            targetCameraTarget.copy(node.position);
+                            targetCameraDistance = 25;
+                        }
+                    }
+                }, i * 400);
+            });
+        }
+
+        function clearPath() {
+            currentPath = [];
+            
+            nodes.forEach(node => {
+                node.material.opacity = 0.95;
+                node.material.emissiveIntensity = 0.4;
+                node.scale.set(1, 1, 1);
+                node.userData.dimmed = false;
+            });
+            
+            connections.forEach(conn => {
+                conn.mesh.material.opacity = conn.baseOpacity;
+            });
+            
+            pathHighlightedNodes = [];
+            pathHighlightedConnections = [];
+            
+            document.getElementById('path-result').style.display = 'none';
+        }
+
+        // ============================================
+        // TIMELINE
+        // ============================================
+
+        function createTimelineMarkers() {
+            const years = [2015, 2019, 2021, 2023, 2025, 2026];
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            years.forEach(year => {
+                const x = (year - 2020) * 8;
+                
+                const lineGeometry = new THREE.BufferGeometry();
+                const linePoints = [
+                    new THREE.Vector3(x, -15, 0),
+                    new THREE.Vector3(x, 15, 0)
+                ];
+                lineGeometry.setFromPoints(linePoints);
+                
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    color: isDark ? 0x00f0ff : 0x7c3aed,
+                    transparent: true,
+                    opacity: 0
+                });
+                
+                const line = new THREE.Line(lineGeometry, lineMaterial);
+                line.userData.year = year;
+                scene.add(line);
+                timelineLines.push(line);
+                
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 256;
+                canvas.height = 128;
+                
+                ctx.fillStyle = isDark ? 'rgba(0, 240, 255, 0.9)' : 'rgba(124, 58, 237, 0.9)';
+                ctx.font = 'bold 64px JetBrains Mono, monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(year.toString(), canvas.width / 2, canvas.height / 2);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                texture.minFilter = THREE.LinearFilter;
+                
+                const spriteMaterial = new THREE.SpriteMaterial({
+                    map: texture,
+                    transparent: true,
+                    opacity: 0
+                });
+                
+                const sprite = new THREE.Sprite(spriteMaterial);
+                sprite.scale.set(8, 4, 1);
+                sprite.position.set(x, -12, 0);
+                sprite.userData.year = year;
+                sprite.isSprite = true;
+                scene.add(sprite);
+                timelineMarkers.push(sprite);
+            });
+        }
+
+        function updateTimelineVisibility() {
+            const isTimeline = currentView === 'timeline';
+            const targetOpacity = isTimeline ? 0.6 : 0;
+            
+            timelineLines.forEach(line => {
+                line.material.opacity += (targetOpacity - line.material.opacity) * 0.1;
+            });
+            
+            timelineMarkers.forEach(marker => {
+                if (marker.material) {
+                    const markerTargetOpacity = isTimeline ? (marker.isSprite ? 0.9 : 0.3) : 0;
+                    marker.material.opacity += (markerTargetOpacity - marker.material.opacity) * 0.1;
+                }
+            });
+        }
+
+        function calculateTimelinePosition(nodeData) {
+            const year = nodeData.year || 2025;
+            const yearOffset = (year - 2020) * 8;
+            
+            const nodesInYear = [];
+            networkData.layers.forEach(layer => {
+                layer.nodes.forEach(n => {
+                    if ((n.year || 2025) === year) {
+                        nodesInYear.push(n.id);
+                    }
+                });
+            });
+            
+            const indexInYear = nodesInYear.indexOf(nodeData.id);
+            const totalInYear = nodesInYear.length;
+            const yOffset = ((totalInYear - 1) / 2 - indexInYear) * 3;
+            
+            const hashCode = nodeData.id.split('').reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0);
+            const zOffset = (Math.abs(hashCode) % 10 - 5) * 0.5;
+            
+            return new THREE.Vector3(yearOffset, yOffset, zOffset);
+        }
+
+        // ============================================
+        // DEEP LINKING
+        // ============================================
+
+        function handleDeepLink() {
+            const params = new URLSearchParams(window.location.search);
+            const nodeId = params.get('node');
+            
+            if (nodeId) {
+                setTimeout(() => {
+                    const node = nodes.find(n => n.userData.id === nodeId);
+                    if (node) {
+                        selectedNode = node;
+                        openPanel(node.userData);
+                        focusOnNode(node);
+                    }
+                }, 1600);
+            }
+        }
+
+        function updateURL(nodeId) {
+            const url = new URL(window.location);
+            if (nodeId) {
+                url.searchParams.set('node', nodeId);
+            } else {
+                url.searchParams.delete('node');
+            }
+            history.replaceState(null, '', url);
+        }
+
+        function copyShareLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.querySelector('.share-link-btn');
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fa-solid fa-share-nodes"></i> Copy Share Link';
+                }, 2000);
+            });
+        }
+
+        // ============================================
+        // SEARCH
+        // ============================================
+
+        function setupSearch() {
+            const searchInputs = [
+                document.getElementById('node-search'),
+                document.getElementById('node-search-desktop')
+            ];
+            const searchResults = document.getElementById('search-results');
+            
+            searchInputs.forEach(input => {
+                if (!input) return;
+                input.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    
+                    // Sync both inputs
+                    searchInputs.forEach(i => { if (i && i !== e.target) i.value = e.target.value; });
+                    
+                    if (query === '') {
+                        searchResults.innerHTML = '';
+                        resetNodeVisibility();
+                        return;
+                    }
+
+                    const matches = [];
+                    networkData.layers.forEach(layer => {
+                        layer.nodes.forEach(nodeData => {
+                            const nameMatch = nodeData.name.toLowerCase().includes(query);
+                            const tagMatch = nodeData.tags.some(t => t.toLowerCase().includes(query));
+                            const descMatch = nodeData.description.toLowerCase().includes(query);
+                            
+                            if (nameMatch || tagMatch || descMatch) {
+                                matches.push({
+                                    ...nodeData,
+                                    layerLabel: layer.label,
+                                    colorVar: layer.colorVar
+                                });
+                            }
+                        });
+                    });
+
+                    if (matches.length === 0) {
+                        searchResults.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-muted);">No results found</div>';
+                    } else {
+                        searchResults.innerHTML = matches.map(m => {
+                            const colorHex = getComputedStyle(document.documentElement).getPropertyValue(m.colorVar).trim();
+                            return `
+                                <div class="search-result-item" onclick="selectNodeById('${m.id}')">
+                                    <div class="search-result-icon" style="background: ${colorHex};">
+                                        <i class="fa-solid ${m.icon}"></i>
+                                    </div>
+                                    <div class="search-result-info">
+                                        <div class="search-result-name">${m.name}</div>
+                                        <div class="search-result-layer">${m.layerLabel}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    // Dim non-matching nodes
+                    const matchIds = matches.map(m => m.id);
+                    nodes.forEach(node => {
+                        if (matchIds.includes(node.userData.id)) {
+                            node.material.opacity = 0.95;
+                            node.material.emissiveIntensity = 0.8;
+                            node.userData.dimmed = false;
+                        } else {
+                            node.material.opacity = 0.15;
+                            node.material.emissiveIntensity = 0.1;
+                            node.userData.dimmed = true;
+                        }
+                    });
+
+                    connections.forEach(conn => {
+                        const sourceMatch = matchIds.includes(conn.source.userData.id);
+                        const targetMatch = matchIds.includes(conn.target.userData.id);
+                        conn.mesh.material.opacity = (sourceMatch && targetMatch) ? conn.baseOpacity : 0.02;
+                    });
+                });
+            });
+        }
+
+        function resetNodeVisibility() {
+            nodes.forEach(node => {
+                node.material.opacity = 0.95;
+                node.material.emissiveIntensity = 0.4;
+                node.userData.dimmed = false;
+            });
+            connections.forEach(conn => {
+                conn.mesh.material.opacity = conn.baseOpacity;
+            });
+        }
+
+        function selectNodeById(nodeId) {
+            const node = nodes.find(n => n.userData.id === nodeId);
+            if (node) {
+                selectedNode = node;
+                openPanel(node.userData);
+                focusOnNode(node);
+                closeSearch();
+                
+                document.getElementById('node-search').value = '';
+                const desktopInput = document.getElementById('node-search-desktop');
+                if (desktopInput) desktopInput.value = '';
+                document.getElementById('search-results').innerHTML = '';
+                resetNodeVisibility();
+            }
+        }
+
+        function focusOnNode(node) {
+            targetCameraTarget.copy(node.position);
+            targetCameraDistance = isMobile ? 18 : 15;
+            updateURL(node.userData.id);
+        }
+
+        function toggleSearch() {
+            searchVisible = !searchVisible;
+            const overlay = document.getElementById('search-overlay');
+            const btn = document.getElementById('search-toggle-btn');
+            
+            if (searchVisible) {
+                overlay.classList.add('visible');
+                btn.classList.add('active');
+                
+                // Show appropriate input
+                if (window.innerWidth >= 1024) {
+                    document.getElementById('desktop-search-input').style.display = 'block';
+                    document.querySelector('.search-header').style.display = 'none';
+                    document.getElementById('node-search-desktop').focus();
+                } else {
+                    document.getElementById('desktop-search-input').style.display = 'none';
+                    document.querySelector('.search-header').style.display = 'flex';
+                    document.getElementById('node-search').focus();
+                }
+                
+                if (pathTracerVisible) togglePathTracer();
+            } else {
+                closeSearch();
+            }
+        }
+
+        function closeSearch() {
+            searchVisible = false;
+            document.getElementById('search-overlay').classList.remove('visible');
+            document.getElementById('search-toggle-btn').classList.remove('active');
+            document.getElementById('node-search').value = '';
+            const desktopInput = document.getElementById('node-search-desktop');
+            if (desktopInput) desktopInput.value = '';
+            document.getElementById('search-results').innerHTML = '';
+            resetNodeVisibility();
+        }
+
+        // ============================================
+        // NODE LABELS (Desktop only)
+        // ============================================
+
+        function createNodeLabel(node) {
+            if (isMobile) return; // Skip labels on mobile
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 512;
+            canvas.height = 128;
+            
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            ctx.fillStyle = isDark ? 'rgba(10, 10, 20, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.roundRect(0, 30, canvas.width, 68, 20);
+            ctx.fill();
+            
+            ctx.strokeStyle = isDark ? 'rgba(0, 240, 255, 0.3)' : 'rgba(124, 58, 237, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.fillStyle = isDark ? '#fafafa' : '#18181b';
+            ctx.font = 'bold 32px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            let name = node.userData.name;
+            if (name.length > 18) name = name.substring(0, 16) + '...';
+            ctx.fillText(name, canvas.width / 2, 64);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            
+            const spriteMaterial = new THREE.SpriteMaterial({ 
+                map: texture, 
+                transparent: true,
+                opacity: 0.9,
+                depthTest: false
+            });
+            
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(5, 1.25, 1);
+            sprite.position.y = 1.5;
+            sprite.userData.isLabel = true;
+            
+            node.add(sprite);
+            nodeLabels.push(sprite);
+        }
+
+        function updateNodeLabels() {
+            if (isMobile) return;
+            
+            nodeLabels.forEach(label => {
+                label.lookAt(camera.position);
+                
+                const parent = label.parent;
+                if (parent) {
+                    const distance = camera.position.distanceTo(parent.position);
+                    const scale = Math.max(0.5, Math.min(1.2, 30 / distance));
+                    label.scale.set(5 * scale, 1.25 * scale, 1);
+                    label.material.opacity = labelsVisible ? Math.max(0.3, Math.min(0.9, 50 / distance)) : 0;
+                }
+            });
+        }
+
+        function toggleLabels() {
+            labelsVisible = !labelsVisible;
+        }
+
+        // ============================================
+        // THREE.JS SCENE BUILDING
+        // ============================================
+
+        function createGrid() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? 0x00f0ff : 0x7c3aed;
+            
+            const gridHelper = new THREE.GridHelper(100, isMobile ? 25 : 50, gridColor, gridColor);
+            gridHelper.material.opacity = 0.08;
+            gridHelper.material.transparent = true;
+            gridHelper.position.y = -12;
+            scene.add(gridHelper);
+            gridLines = gridHelper;
+        }
+
+        function buildNetwork() {
+            const layerCount = networkData.layers.length;
+            const startX = -((layerCount - 1) * config.layerGap) / 2;
+
+            networkData.layers.forEach((layer, layerIdx) => {
+                const x = startX + layerIdx * config.layerGap;
+                const nodeCount = layer.nodes.length;
+                const startY = ((nodeCount - 1) * config.nodeSpacing) / 2;
+
+                const colorHex = getComputedStyle(document.documentElement).getPropertyValue(layer.colorVar).trim();
+                const color = new THREE.Color(colorHex);
+
+                layer.nodes.forEach((nodeData, nodeIdx) => {
+                    const y = startY - nodeIdx * config.nodeSpacing;
+                    const z = (Math.random() - 0.5) * 2;
+                    createNode(new THREE.Vector3(x, y, z), color, nodeData, layer.id, layer.label);
+                });
+            });
+
+            networkData.connections.forEach(connData => {
+                const sourceNode = nodes.find(n => n.userData.id === connData.from);
+                const targetNode = nodes.find(n => n.userData.id === connData.to);
+                if (sourceNode && targetNode) createConnection(sourceNode, targetNode, connData.strength);
+            });
+        }
+
+        function createNode(position, color, data, layerId, layerLabel) {
+            const geometry = new THREE.IcosahedronGeometry(config.nodeSize, isMobile ? 1 : 2);
+            const material = new THREE.MeshStandardMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.4,
+                metalness: 0.3,
+                roughness: 0.4,
+                transparent: true,
+                opacity: 0.95
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.copy(position);
+            mesh.userData = { ...data, layerId, layerLabel, color: color.clone(), basePosition: position.clone() };
+
+            scene.add(mesh);
+            nodes.push(mesh);
+
+            // Outer glow
+            const glowGeometry = new THREE.IcosahedronGeometry(config.nodeSize * 1.4, 1);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.BackSide
+            });
+            const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+            mesh.add(glowMesh);
+
+            if (!isMobile) {
+                createOrbitalRing(mesh, color);
+                createNodeLabel(mesh);
+            }
+        }
+
+        function createOrbitalRing(parentNode, color) {
+            const ringGeometry = new THREE.TorusGeometry(0.85, 0.02, 8, 64);
+            const ringMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.5
+            });
+
+            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+            ring.rotation.x = Math.PI / 2;
+            ring.userData.parentNode = parentNode;
+            ring.userData.rotationSpeed = 0.02 + Math.random() * 0.02;
+            parentNode.add(ring);
+            orbitalRings.push(ring);
+
+            const ring2 = new THREE.Mesh(ringGeometry.clone(), ringMaterial.clone());
+            ring2.rotation.x = Math.PI / 3;
+            ring2.rotation.z = Math.PI / 4;
+            ring2.userData.parentNode = parentNode;
+            ring2.userData.rotationSpeed = 0.015 + Math.random() * 0.015;
+            parentNode.add(ring2);
+            orbitalRings.push(ring2);
+        }
+
+        function createConnection(nodeA, nodeB, strength) {
+            const points = [];
+            const segments = isMobile ? 15 : 30;
+            
+            for (let i = 0; i <= segments; i++) {
+                const t = i / segments;
+                const x = nodeA.position.x + (nodeB.position.x - nodeA.position.x) * t;
+                const y = nodeA.position.y + (nodeB.position.y - nodeA.position.y) * t + Math.sin(t * Math.PI) * 2;
+                const z = nodeA.position.z + (nodeB.position.z - nodeA.position.z) * t;
+                points.push(new THREE.Vector3(x, y, z));
+            }
+
+            const curve = new THREE.CatmullRomCurve3(points);
+            const tubeGeometry = new THREE.TubeGeometry(curve, segments, 0.025 + strength * 0.02, isMobile ? 4 : 8, false);
+
+            const colors = [];
+            const colorA = nodeA.userData.color;
+            const colorB = nodeB.userData.color;
+            const positions = tubeGeometry.attributes.position;
+            
+            for (let i = 0; i < positions.count; i++) {
+                const t = i / positions.count;
+                const mixedColor = colorA.clone().lerp(colorB, t);
+                colors.push(mixedColor.r, mixedColor.g, mixedColor.b);
+            }
+            
+            tubeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.MeshBasicMaterial({
+                vertexColors: true,
+                transparent: true,
+                opacity: strength * 0.4 + 0.1
+            });
+
+            const tube = new THREE.Mesh(tubeGeometry, material);
+            scene.add(tube);
+
+            connections.push({
+                mesh: tube,
+                source: nodeA,
+                target: nodeB,
+                strength,
+                curve,
+                baseOpacity: strength * 0.4 + 0.1
+            });
+        }
+
+        function createBackgroundParticles() {
+            const geometry = new THREE.BufferGeometry();
+            const positions = [], colors = [];
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const baseColor = isDark ? new THREE.Color(0x00f0ff) : new THREE.Color(0x7c3aed);
+
+            for (let i = 0; i < config.particleCount; i++) {
+                positions.push(
+                    (Math.random() - 0.5) * 180,
+                    (Math.random() - 0.5) * 120,
+                    (Math.random() - 0.5) * 120 - 30
+                );
+
+                const mixRatio = Math.random();
+                colors.push(
+                    baseColor.r * (0.2 + mixRatio * 0.5),
+                    baseColor.g * (0.2 + mixRatio * 0.5),
+                    baseColor.b * (0.2 + mixRatio * 0.5)
+                );
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: isMobile ? 0.15 : 0.12,
+                transparent: true,
+                opacity: 0.7,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            particlesSystem = new THREE.Points(geometry, material);
+            scene.add(particlesSystem);
+        }
+
+        // ============================================
+        // ANIMATION LOOP
+        // ============================================
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+
+            // Smooth camera transitions
+            cameraAngleX += (targetCameraAngleX - cameraAngleX) * 0.05;
+            cameraAngleY += (targetCameraAngleY - cameraAngleY) * 0.05;
+            cameraDistance += (targetCameraDistance - cameraDistance) * 0.05;
+            cameraTarget.lerp(targetCameraTarget, 0.05);
+
+            if (autoRotate && !isDragging) {
+                targetCameraAngleX += 0.002;
+            }
+
+            updateCameraPosition();
+            
+            if (!isMobile) {
+                updateTimelineVisibility();
+            }
+
+            // Animate particles (reduced frequency on mobile)
+            if (particlesSystem && (!isMobile || Math.random() > 0.5)) {
+                const positions = particlesSystem.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] += Math.sin(time + positions[i] * 0.01) * 0.003;
+                }
+                particlesSystem.geometry.attributes.position.needsUpdate = true;
+                particlesSystem.rotation.y = time * 0.015;
+            }
+
+            // Update nodes
+            nodes.forEach((node, i) => {
+                if (node.userData.dimmed) return;
+                
+                const isActive = hoveredNode === node || selectedNode === node;
+                const isConnected = isConnectedTo(node, hoveredNode) || isConnectedTo(node, selectedNode);
+                const isInPath = currentPath.includes(node.userData.id);
+
+                let targetIntensity = isActive ? 1.2 : (isConnected ? 0.7 : 0.4);
+                if (isInPath && currentPath.length > 0) targetIntensity = 1.2;
+                node.material.emissiveIntensity += (targetIntensity - node.material.emissiveIntensity) * 0.1;
+
+                let targetScale = isActive ? 1.3 : 1;
+                if (isInPath && currentPath.length > 0) targetScale = 1.3;
+                node.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+
+                if (isActive) {
+                    node.rotation.y += 0.03;
+                    node.rotation.z += 0.015;
+                }
+
+                const baseY = currentView === 'network' 
+                    ? node.userData.basePosition.y 
+                    : (targetPositions[node.userData.id]?.timeline.y || 0);
+                const floatY = baseY + Math.sin(time * 1.5 + i * 0.5) * 0.1;
+                node.position.y += (floatY - node.position.y) * 0.05;
+
+                if (targetPositions[node.userData.id]) {
+                    const target = targetPositions[node.userData.id][currentView];
+                    node.position.x += (target.x - node.position.x) * 0.05;
+                    node.position.z += (target.z - node.position.z) * 0.05;
+                }
+
+                // Glow animation
+                if (node.children[0] && !node.children[0].userData?.isLabel) {
+                    const glowScale = 1 + Math.sin(time * 2 + i) * 0.1 + (isActive ? 0.3 : 0);
+                    node.children[0].scale.setScalar(glowScale);
+                }
+            });
+
+            // Update orbital rings (desktop only)
+            if (!isMobile) {
+                orbitalRings.forEach(ring => {
+                    ring.rotation.z += ring.userData.rotationSpeed || 0.02;
+                    const parentNode = ring.userData.parentNode;
+                    if (parentNode) {
+                        const isActive = hoveredNode === parentNode || selectedNode === parentNode;
+                        ring.material.opacity = isActive ? 0.8 : 0.3;
+                    }
+                });
+            }
+
+            // Connection highlighting
+            connections.forEach(conn => {
+                if (conn.source.userData.dimmed || conn.target.userData.dimmed) return;
+                if (currentPath.length > 0) return;
+                
+                const isActive = hoveredNode === conn.source || hoveredNode === conn.target ||
+                                 selectedNode === conn.source || selectedNode === conn.target;
+                
+                let targetOpacity;
+                if (currentView === 'timeline') {
+                    targetOpacity = isActive ? 0.3 : 0.05;
+                } else {
+                    targetOpacity = isActive ? conn.strength * 0.8 + 0.2 : conn.baseOpacity;
+                }
+                conn.mesh.material.opacity += (targetOpacity - conn.mesh.material.opacity) * 0.1;
+            });
+
+            // Data packets (reduced on mobile)
+            if (Math.random() > (isMobile ? 0.99 : 0.97) && currentPath.length === 0) {
+                const randomConn = connections[Math.floor(Math.random() * connections.length)];
+                if (randomConn && randomConn.strength > 0.5) createDataPacket(randomConn);
+            }
+
+            updateDataPackets();
+            
+            if (!isMobile) {
+                updateNodeLabels();
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        function createDataPacket(connection) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const packetColor = isDark ? 0x00ffff : 0xfbbf24;
+            
+            const geometry = new THREE.SphereGeometry(0.15, isMobile ? 6 : 12, isMobile ? 6 : 12);
+            const material = new THREE.MeshBasicMaterial({ color: packetColor, transparent: true, opacity: 1 });
+            const packet = new THREE.Mesh(geometry, material);
+            
+            if (!isMobile) {
+                const glowGeometry = new THREE.SphereGeometry(0.35, 8, 8);
+                const glowMaterial = new THREE.MeshBasicMaterial({ color: packetColor, transparent: true, opacity: 0.5 });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                packet.add(glow);
+            }
+            
+            scene.add(packet);
+
+            dataPackets.push({
+                mesh: packet,
+                connection: connection,
+                progress: 0,
+                speed: config.dataPacketSpeed + Math.random() * 0.01,
+                trail: []
+            });
+        }
+
+        function updateDataPackets() {
+            for (let i = dataPackets.length - 1; i >= 0; i--) {
+                const packet = dataPackets[i];
+                packet.progress += packet.speed;
+
+                if (packet.progress >= 1) {
+                    scene.remove(packet.mesh);
+                    packet.trail.forEach(t => scene.remove(t));
+                    dataPackets.splice(i, 1);
+                } else {
+                    const source = packet.connection.source.position;
+                    const target = packet.connection.target.position;
+                    const t = packet.progress;
+                    
+                    const x = source.x + (target.x - source.x) * t;
+                    const y = source.y + (target.y - source.y) * t + Math.sin(t * Math.PI) * 2;
+                    const z = source.z + (target.z - source.z) * t;
+                    
+                    packet.mesh.position.set(x, y, z);
+                    
+                    const fadeOpacity = Math.sin(packet.progress * Math.PI);
+                    packet.mesh.material.opacity = fadeOpacity;
+                    
+                    if (packet.mesh.children[0]) {
+                        packet.mesh.children[0].material.opacity = fadeOpacity * 0.5;
+                        const pulseScale = 1 + Math.sin(packet.progress * Math.PI * 6) * 0.3;
+                        packet.mesh.children[0].scale.setScalar(pulseScale);
+                    }
+                }
+            }
+        }
+
+        function isConnectedTo(node, targetNode) {
+            if (!targetNode) return false;
+            return connections.some(c =>
+                (c.source === targetNode && c.target === node) ||
+                (c.target === targetNode && c.source === node)
+            );
+        }
+
+        function updateCameraPosition() {
+            camera.position.x = cameraTarget.x + Math.sin(cameraAngleX) * Math.cos(cameraAngleY) * cameraDistance;
+            camera.position.y = cameraTarget.y + Math.sin(cameraAngleY) * cameraDistance;
+            camera.position.z = cameraTarget.z + Math.cos(cameraAngleX) * Math.cos(cameraAngleY) * cameraDistance;
+            camera.lookAt(cameraTarget);
+        }
+
+        // ============================================
+        // VIEW MODES
+        // ============================================
+
+        function setView(viewName) {
+            currentView = viewName;
+            
+            const networkBtn = document.getElementById('networkViewBtn');
+            const timelineBtn = document.getElementById('timelineViewBtn');
+            const timelineBar = document.getElementById('timeline-bar');
+            const legend = document.getElementById('legend');
+            
+            if (networkBtn) networkBtn.classList.toggle('active', viewName === 'network');
+            if (timelineBtn) timelineBtn.classList.toggle('active', viewName === 'timeline');
+            if (timelineBar) timelineBar.classList.toggle('visible', viewName === 'timeline');
+            if (legend) legend.style.display = viewName === 'network' ? 'block' : 'none';
+
+            // Update FAB icon on mobile
+            const viewFabIcon = document.getElementById('viewFabIcon');
+            if (viewFabIcon) {
+                viewFabIcon.className = viewName === 'network' ? 'fa-solid fa-clock-rotate-left' : 'fa-solid fa-diagram-project';
+            }
+
+            if (viewName === 'timeline') {
+                targetCameraTarget.set(24, 0, 0);
+                targetCameraDistance = isMobile ? 60 : 55;
+                targetCameraAngleY = 0.1;
+            } else {
+                targetCameraTarget.set(0, 0, 0);
+                targetCameraDistance = isMobile ? 42 : 38;
+                targetCameraAngleY = 0.2;
+            }
+        }
+
+        function toggleViewMode() {
+            setView(currentView === 'network' ? 'timeline' : 'network');
+        }
+
+        function focusYear(year) {
+            document.querySelectorAll('.timeline-year').forEach(el => {
+                el.classList.toggle('active', parseInt(el.dataset.year) === year);
+            });
+            
+            const yearOffset = (year - 2020) * 8;
+            targetCameraTarget.x = yearOffset;
+            targetCameraDistance = isMobile ? 30 : 25;
+        }
+
+        // ============================================
+        // INPUT HANDLERS
+        // ============================================
+
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            if (isDragging) {
+                const deltaX = event.clientX - previousMousePosition.x;
+                const deltaY = event.clientY - previousMousePosition.y;
+
+                targetCameraAngleX -= deltaX * 0.005;
+                targetCameraAngleY += deltaY * 0.005;
+                targetCameraAngleY = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, targetCameraAngleY));
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+                return;
+            }
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodes);
+
+            if (intersects.length > 0) {
+                const node = intersects[0].object;
+                if (hoveredNode !== node) {
+                    hoveredNode = node;
+                    document.body.style.cursor = 'pointer';
+                    showTooltip(event, node.userData);
+                }
+                moveTooltip(event);
+            } else {
+                if (hoveredNode) {
+                    hoveredNode = null;
+                    document.body.style.cursor = isDragging ? 'grabbing' : 'grab';
+                    hideTooltip();
+                }
+            }
+        }
+
+        function onMouseDown(event) {
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+            document.body.style.cursor = 'grabbing';
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            document.body.style.cursor = hoveredNode ? 'pointer' : 'grab';
+        }
+
+        function onClick(event) {
+            if (hoveredNode && !isDragging) {
+                selectedNode = hoveredNode;
+                openPanel(hoveredNode.userData);
+                focusOnNode(hoveredNode);
+            }
+        }
+
+        function onWheel(event) {
+            event.preventDefault();
+            targetCameraDistance += event.deltaY * 0.03;
+            targetCameraDistance = Math.max(10, Math.min(70, targetCameraDistance));
+        }
+
+        // Touch handlers
+        let touchStartPos = { x: 0, y: 0 }, lastTouchDistance = 0, isTouchDragging = false;
+        let touchStartTime = 0;
+
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                touchStartPos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+                previousMousePosition = { ...touchStartPos };
+                isTouchDragging = false;
+                touchStartTime = Date.now();
+            } else if (event.touches.length === 2) {
+                lastTouchDistance = getTouchDistance(event.touches);
+            }
+        }
+
+        function onTouchMove(event) {
+            event.preventDefault();
+            if (event.touches.length === 1) {
+                const dx = event.touches[0].clientX - previousMousePosition.x;
+                const dy = event.touches[0].clientY - previousMousePosition.y;
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                    isTouchDragging = true;
+                    targetCameraAngleX -= dx * 0.008;
+                    targetCameraAngleY += dy * 0.008;
+                    targetCameraAngleY = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, targetCameraAngleY));
+                    previousMousePosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+                }
+            } else if (event.touches.length === 2) {
+                const currentDistance = getTouchDistance(event.touches);
+                const delta = lastTouchDistance - currentDistance;
+                targetCameraDistance += delta * 0.05;
+                targetCameraDistance = Math.max(10, Math.min(70, targetCameraDistance));
+                lastTouchDistance = currentDistance;
+            }
+        }
+
+        function onTouchEnd(event) {
+            const touchDuration = Date.now() - touchStartTime;
+            
+            if (!isTouchDragging && touchDuration < 300 && event.changedTouches.length === 1) {
+                const touch = event.changedTouches[0];
+                mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(nodes);
+                if (intersects.length > 0) {
+                    selectedNode = intersects[0].object;
+                    openPanel(selectedNode.userData);
+                    focusOnNode(selectedNode);
+                }
+            }
+            isTouchDragging = false;
+        }
+
+        function getTouchDistance(touches) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function onKeyDown(event) {
+            // Don't trigger when typing
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') {
+                if (event.key === 'Escape') {
+                    closeSearch();
+                }
+                return;
+            }
+            
+            switch (event.key.toLowerCase()) {
+                case 'f': triggerPulse(); break;
+                case 'a': highlightActivations(); break;
+                case 'r': resetCamera(); break;
+                case 'd': toggleTheme(); break;
+                case 't': toggleViewMode(); break;
+                case 'l': if (!isMobile) toggleLabels(); break;
+                case 'p': togglePathTracer(); break;
+                case '/': 
+                    event.preventDefault();
+                    toggleSearch(); 
+                    break;
+                case 'escape': 
+                    if (searchVisible) {
+                        closeSearch();
+                    } else if (pathTracerVisible) {
+                        togglePathTracer();
+                    } else {
+                        closePanel(); 
+                    }
+                    break;
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+
+        function showTooltip(e, data) {
+            const tooltip = document.getElementById('tooltip');
+            if (!tooltip || isMobile) return;
+            document.getElementById('tooltip-name').textContent = data.name || 'Unknown';
+            document.getElementById('tooltip-tag').textContent = data.tags && data.tags.length > 0 ? `| ${data.tags[0]}` : '';
+            tooltip.classList.add('visible');
+        }
+
+        function moveTooltip(e) {
+            const tooltip = document.getElementById('tooltip');
+            if (!tooltip || isMobile) return;
+            const x = Math.min(e.clientX + 15, window.innerWidth - tooltip.offsetWidth - 10);
+            const y = Math.min(e.clientY + 15, window.innerHeight - tooltip.offsetHeight - 10);
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip) tooltip.classList.remove('visible');
+        }
+
+        function openPanel(data) {
+            document.getElementById('info-panel').classList.add('open');
+
+            const tagsHtml = data.tags.map(t => `<span class="info-tag">${t}</span>`).join('');
+
+            const relatedConnections = [];
+            networkData.connections.forEach(conn => {
+                if (conn.from === data.id || conn.to === data.id) {
+                    const otherId = conn.from === data.id ? conn.to : conn.from;
+                    const otherNode = nodes.find(n => n.userData.id === otherId);
+                    if (otherNode) {
+                        const direction = conn.from === data.id ? '→' : '←';
+                        relatedConnections.push({ name: otherNode.userData.name, weight: conn.strength, direction });
+                    }
+                }
+            });
+            relatedConnections.sort((a, b) => b.weight - a.weight);
+
+            const connectionsHtml = relatedConnections.slice(0, 4).map(conn => `
+                <div class="info-connection">
+                    <span class="connection-name">${conn.direction} ${conn.name}</span>
+                    <span class="connection-weight">${(conn.weight * 100).toFixed(0)}%</span>
+                </div>
+            `).join('');
+
+            document.getElementById('panel-content').innerHTML = `
+                <div class="info-header">
+                    <div class="info-icon" style="background: var(--gradient-primary);"><i class="fa-solid ${data.icon}"></i></div>
+                    <div>
+                        <h2 class="info-title">${data.name}</h2>
+                        <div class="info-subtitle">${data.layerLabel} • ${data.year}</div>
+                        <div class="info-accent-line"></div>
+                    </div>
+                </div>
+                <p class="info-description">${data.description}</p>
+                <div class="info-section">
+                    <div class="info-section-title">Attributes</div>
+                    <div class="info-tags">${tagsHtml}</div>
+                </div>
+                <div class="info-section">
+                    <div class="info-section-title">Connections</div>
+                    <div class="info-connections">${connectionsHtml}</div>
+                </div>
+                <div class="activation-meter">
+                    <div class="activation-header">
+                        <span class="activation-label">Activation</span>
+                        <span class="activation-value">${(data.activation * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="activation-bar">
+                        <div class="activation-fill" style="width: ${data.activation * 100}%"></div>
+                    </div>
+                </div>
+                <button class="share-link-btn" onclick="copyShareLink()">
+                    <i class="fa-solid fa-share-nodes"></i> Copy Share Link
+                </button>
+            `;
+        }
+
+        function closePanel() {
+            document.getElementById('info-panel').classList.remove('open');
+            selectedNode = null;
+            updateURL(null);
+        }
+
+        function resetCamera() {
+            if (currentView === 'timeline') {
+                targetCameraTarget.set(24, 0, 0);
+                targetCameraDistance = isMobile ? 60 : 55;
+                targetCameraAngleY = 0.1;
+            } else {
+                targetCameraTarget.set(0, 0, 0);
+                targetCameraDistance = isMobile ? 42 : 38;
+                targetCameraAngleY = 0.2;
+            }
+            targetCameraAngleX = 0;
+        }
+
+        function cameraToSection(sectionId) {
+            const layerMap = { 'input': -20, 'hidden': 0, 'output': 20 };
+            targetCameraTarget.x = layerMap[sectionId] || 0;
+            targetCameraDistance = isMobile ? 26 : 22;
+
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab, .nav-center button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function toggleAutoRotate() {
+            autoRotate = !autoRotate;
+            document.getElementById('autoRotateBtn').classList.toggle('active', autoRotate);
+        }
+
+        function triggerPulse() {
+            nodes.forEach((node, i) => {
+                setTimeout(() => {
+                    node.material.emissiveIntensity = 1.5;
+                    node.scale.set(1.4, 1.4, 1.4);
+                }, i * 40);
+            });
+            connections.forEach((conn, i) => {
+                setTimeout(() => createDataPacket(conn), i * 25);
+            });
+            setTimeout(() => {
+                nodes.forEach(node => {
+                    if (node !== hoveredNode && node !== selectedNode) {
+                        node.material.emissiveIntensity = 0.4;
+                        node.scale.set(1, 1, 1);
+                    }
+                });
+            }, 2500);
+        }
+
+        function highlightActivations() {
+            nodes.forEach((node, i) => {
+                setTimeout(() => {
+                    node.material.emissiveIntensity = node.userData.activation * 1.5;
+                    const scale = 0.8 + node.userData.activation * 0.6;
+                    node.scale.set(scale, scale, scale);
+                }, i * 35);
+            });
+            setTimeout(() => {
+                nodes.forEach(node => {
+                    if (node !== hoveredNode && node !== selectedNode) {
+                        node.material.emissiveIntensity = 0.4;
+                        node.scale.set(1, 1, 1);
+                    }
+                });
+            }, 3500);
+        }
+
+        // ============================================
+        // THEME
+        // ============================================
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (prefersDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateSceneForTheme();
+            updateLegendColors();
+        }
+
+        function updateSceneForTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const bgColor = isDark ? 0x030305 : 0xf8fafc;
+            const gridColor = isDark ? 0x00f0ff : 0x7c3aed;
+
+            scene.background = new THREE.Color(bgColor);
+            scene.fog.color = new THREE.Color(bgColor);
+
+            if (gridLines) {
+                gridLines.material.color = new THREE.Color(gridColor);
+            }
+
+            nodes.forEach(node => {
+                const layer = networkData.layers.find(l => l.nodes.some(n => n.id === node.userData.id));
+                if (layer) {
+                    const colorHex = getComputedStyle(document.documentElement).getPropertyValue(layer.colorVar).trim();
+                    const newColor = new THREE.Color(colorHex);
+                    node.material.color = newColor;
+                    node.material.emissive = newColor;
+                    node.userData.color = newColor;
+                    if (node.children[0] && !node.children[0].userData?.isLabel) {
+                        node.children[0].material.color = newColor;
+                    }
+                }
+            });
+            
+            timelineLines.forEach(line => {
+                line.material.color = new THREE.Color(gridColor);
+            });
+        }
+
+        function updateLegendColors() {
+            const legendInput = document.getElementById('legend-input');
+            if (!legendInput) return;
+            
+            document.getElementById('legend-input').style.background = getComputedStyle(document.documentElement).getPropertyValue('--color-input');
+            document.getElementById('legend-hidden1').style.background = getComputedStyle(document.documentElement).getPropertyValue('--color-hidden1');
+            document.getElementById('legend-hidden2').style.background = getComputedStyle(document.documentElement).getPropertyValue('--color-hidden2');
+            document.getElementById('legend-hidden3').style.background = getComputedStyle(document.documentElement).getPropertyValue('--color-hidden3');
+            document.getElementById('legend-output').style.background = getComputedStyle(document.documentElement).getPropertyValue('--color-output');
+        }
+
+        function typeWriterEffect() {
+            const roles = [
+                "AI/ML Engineer in Training",
+                "Medical → Tech Innovator",
+                "Director's Honour Roll",
+                "GPA 3.92 @ Singapore Poly"
+            ];
+            let roleIndex = 0, charIndex = 0, isDeleting = false;
+            const element = document.getElementById('typing-text');
+            if (!element) return;
+
+            function type() {
+                const currentRole = roles[roleIndex];
+                if (isDeleting) {
+                    element.textContent = currentRole.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    element.textContent = currentRole.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+
+                let typeSpeed = isDeleting ? 40 : 80;
+                if (!isDeleting && charIndex === currentRole.length) {
+                    typeSpeed = 2500;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    roleIndex = (roleIndex + 1) % roles.length;
+                    typeSpeed = 400;
+                }
+                setTimeout(type, typeSpeed);
+            }
+            type();
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
