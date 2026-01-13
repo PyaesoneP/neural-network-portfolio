@@ -33,7 +33,7 @@ An interactive 3D portfolio that visualizes skills, experiences, and projects as
 - **Element Highlighting** - Spotlights key UI features during onboarding
 - **Persistent Memory** - Remembers returning visitors
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Three.js** - 3D rendering and WebGL
 - **Vanilla JavaScript** - No framework dependencies
