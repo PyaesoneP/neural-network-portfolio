@@ -2,7 +2,7 @@
 
 An interactive 3D portfolio that visualizes skills, experiences, and projects as a neural network. Built with Three.js, this mobile-first web experience represents a unique journey from medical student to AI/ML engineer.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-7c3aed?style=for-the-badge&logo=vercel)](https://your-demo-link.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-7c3aed?style=for-the-badge&logo=vercel)](https://pyaesonep.github.io/neural-network-portfolio)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Mobile First](https://img.shields.io/badge/Mobile-First-00f0ff?style=for-the-badge&logo=android)](/)
 
