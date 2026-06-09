@@ -1,0 +1,720 @@
+{
+  "layers": [
+    {
+      "id": "input",
+      "label": "Education & Background",
+      "colorVar": "--color-input",
+      "nodes": [
+        {
+          "id": "medical",
+          "name": "Medical Background",
+          "icon": "fa-user-md",
+          "description": "MBBS from University of Medicine 1, Yangon. 5 years of clinical training including hospital rotations and rural public health. Physician-turned-AI-engineer.",
+          "tags": [
+            "MBBS",
+            "Clinical",
+            "Healthcare"
+          ],
+          "activation": 0.95,
+          "year": 2015
+        },
+        {
+          "id": "sutd",
+          "name": "SUTD Computer Science",
+          "icon": "fa-building-columns",
+          "description": "BEng in Computer Science & Design at Singapore University of Technology and Design. Trailblazers Scholar.",
+          "tags": [
+            "SUTD",
+            "CSD",
+            "Scholar"
+          ],
+          "activation": 0.92,
+          "year": 2026
+        },
+        {
+          "id": "sp_diploma",
+          "name": "SP Computer Engineering",
+          "icon": "fa-award",
+          "description": "Diploma with Merit in Computer Engineering at Singapore Polytechnic. CGPA 3.94/4.00. Director's Honour Roll.",
+          "tags": [
+            "CGPA 3.94",
+            "Merit",
+            "Director's Roll"
+          ],
+          "activation": 0.98,
+          "year": 2023
+        },
+        {
+          "id": "resilience",
+          "name": "Resilience & Drive",
+          "icon": "fa-mountain",
+          "description": "Self-funded education across three countries. Transitioned from medicine to technology driven by passion for AI's potential to transform healthcare.",
+          "tags": [
+            "Self-Funded",
+            "Multi-Disciplinary",
+            "Determination"
+          ],
+          "activation": 0.98,
+          "year": 2021
+        }
+      ]
+    },
+    {
+      "id": "hidden1",
+      "label": "Foundation Layer",
+      "colorVar": "--color-hidden1",
+      "nodes": [
+        {
+          "id": "python",
+          "name": "Python",
+          "icon": "fa-brands fa-python",
+          "description": "Primary language for ML, data science, backend, and automation. NumPy, Pandas, FastAPI, scripting.",
+          "tags": [
+            "NumPy",
+            "Pandas",
+            "FastAPI"
+          ],
+          "activation": 0.96,
+          "year": 2023
+        },
+        {
+          "id": "math_stats",
+          "name": "Math & Statistics",
+          "icon": "fa-chart-simple",
+          "description": "Engineering Mathematics, Statistical Modeling, Linear Algebra, Calculus. Bootstrap CIs, Permutation Tests, Hypothesis Testing.",
+          "tags": [
+            "Statistics",
+            "Linear Algebra",
+            "Bootstrap"
+          ],
+          "activation": 0.92,
+          "year": 2023
+        },
+        {
+          "id": "software_eng",
+          "name": "Software Engineering",
+          "icon": "fa-code",
+          "description": "OOP, Data Structures, REST APIs, Git/GitHub. CI/CD pipelines, testing at 94% coverage.",
+          "tags": [
+            "OOP",
+            "Git",
+            "CI/CD",
+            "Testing"
+          ],
+          "activation": 0.9,
+          "year": 2023
+        },
+        {
+          "id": "cloud_devops",
+          "name": "Cloud & DevOps",
+          "icon": "fa-cloud",
+          "description": "Docker, Kubernetes (k3s), Google Cloud Run, Vertex AI, GCP. Dell Docker & K8s certified.",
+          "tags": [
+            "Docker",
+            "Kubernetes",
+            "GCP",
+            "Cloud Run"
+          ],
+          "activation": 0.88,
+          "year": 2025
+        },
+        {
+          "id": "cybersec_foundation",
+          "name": "Cybersecurity",
+          "icon": "fa-shield-halved",
+          "description": "Red teaming, purple team exercises. CrowdStrike Falcon, Microsoft Sentinel, SIEM. PowerShell hardening automation.",
+          "tags": [
+            "Red Team",
+            "CrowdStrike",
+            "Sentinel",
+            "PowerShell"
+          ],
+          "activation": 0.89,
+          "year": 2025
+        }
+      ]
+    },
+    {
+      "id": "hidden2",
+      "label": "Core AI/ML Skills",
+      "colorVar": "--color-hidden2",
+      "nodes": [
+        {
+          "id": "machine_learning",
+          "name": "Machine Learning",
+          "icon": "fa-chart-line",
+          "description": "Stanford ML Specialization. Scikit-Learn, Decision Trees, Random Forest, K-Means. Statistical modeling with 70k patient records.",
+          "tags": [
+            "Scikit-Learn",
+            "Stanford ML",
+            "Statistics"
+          ],
+          "activation": 0.93,
+          "year": 2025
+        },
+        {
+          "id": "deep_learning",
+          "name": "Deep Learning",
+          "icon": "fa-brain",
+          "description": "DeepLearning.AI specialization. PyTorch, TensorFlow, Keras. CNNs, Transfer Learning (EfficientNet-B0), He initialization, manual backprop.",
+          "tags": [
+            "PyTorch",
+            "TensorFlow",
+            "CNNs",
+            "Transfer Learning"
+          ],
+          "activation": 0.94,
+          "year": 2025
+        },
+        {
+          "id": "nlp_llm",
+          "name": "NLP & LLMs",
+          "icon": "fa-comments",
+          "description": "HuggingFace Transformers, Prompt Engineering, RAG pipelines. Quantized MedGemma 4B, Ollama inference. LLM safety evaluation.",
+          "tags": [
+            "HuggingFace",
+            "RAG",
+            "Transformers",
+            "Ollama"
+          ],
+          "activation": 0.9,
+          "year": 2025
+        },
+        {
+          "id": "computer_vision",
+          "name": "Computer Vision",
+          "icon": "fa-eye",
+          "description": "OpenCV, MediaPipe, real-time ASL recognition at sub-100ms latency. Hand-gesture ROI extraction, EfficientNet transfer learning at 99.8% accuracy.",
+          "tags": [
+            "OpenCV",
+            "MediaPipe",
+            "EfficientNet",
+            "99.8% Acc"
+          ],
+          "activation": 0.88,
+          "year": 2025
+        },
+        {
+          "id": "mlops",
+          "name": "MLOps & Deployment",
+          "icon": "fa-gears",
+          "description": "Google Cloud MLOps certified. Vertex AI, FastAPI, Docker, Cloud Run. Prometheus observability, CI/CD pipelines. Inference latency monitoring.",
+          "tags": [
+            "Vertex AI",
+            "FastAPI",
+            "Prometheus",
+            "CI/CD"
+          ],
+          "activation": 0.87,
+          "year": 2025
+        }
+      ]
+    },
+    {
+      "id": "hidden3",
+      "label": "Specialized Expertise",
+      "colorVar": "--color-hidden3",
+      "nodes": [
+        {
+          "id": "healthcare_ai",
+          "name": "Healthcare AI",
+          "icon": "fa-heart-pulse",
+          "description": "5-year medical background paired with AI/ML engineering. ED triage agents, clinical NLP, Australasian Triage Scale classification.",
+          "tags": [
+            "Clinical AI",
+            "ED Triage",
+            "Medical NLP"
+          ],
+          "activation": 0.9,
+          "year": 2025
+        },
+        {
+          "id": "llm_security",
+          "name": "LLM Security",
+          "icon": "fa-lock",
+          "description": "LLM prompt-injection defense, adversarial safety guardrails. Red-teaming background applied to model security. Rules-first safety architecture.",
+          "tags": [
+            "Prompt Injection",
+            "Guardrails",
+            "Red Teaming"
+          ],
+          "activation": 0.87,
+          "year": 2025
+        },
+        {
+          "id": "rag_agents",
+          "name": "RAG & AI Agents",
+          "icon": "fa-robot",
+          "description": "RAG pipelines with ChromaDB. Local-first LLM agents. Clinical guideline retrieval. Deterministic floor + LLM escalation architectures.",
+          "tags": [
+            "ChromaDB",
+            "Agents",
+            "RAG",
+            "Local-First"
+          ],
+          "activation": 0.88,
+          "year": 2026
+        },
+        {
+          "id": "devsecops",
+          "name": "DevSecOps",
+          "icon": "fa-shield-virus",
+          "description": "Supply chain security, CIS Benchmark hardening (500+ controls via HardeningKitty). Endpoint compliance: 44%→89%. Azure Logic Apps & ARM Templates.",
+          "tags": [
+            "CIS Benchmarks",
+            "HardeningKitty",
+            "Azure"
+          ],
+          "activation": 0.89,
+          "year": 2025
+        },
+        {
+          "id": "cloud_arch",
+          "name": "Cloud Architecture",
+          "icon": "fa-diagram-project",
+          "description": "Azure cloud pipelines: Logic Apps + ARM Templates + Key Vault. GCP Cloud Run + Vertex AI. CrowdStrike→Sentinel ingestion pipeline.",
+          "tags": [
+            "Azure",
+            "GCP",
+            "ARM",
+            "Key Vault"
+          ],
+          "activation": 0.85,
+          "year": 2025
+        }
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Projects & Impact",
+      "colorVar": "--color-output",
+      "nodes": [
+        {
+          "id": "aegis_md",
+          "name": "Aegis-MD Triage Engine",
+          "icon": "fa-kit-medical",
+          "description": "Local-first multimodal ED triage agent. Quantized MedGemma 4B + RAG over clinical guidelines (ChromaDB). 5-level ATS classification. LLM prompt-injection gateway, 332 tests at 94% coverage. Deployed on Cloud Run.",
+          "tags": [
+            "MedGemma",
+            "RAG",
+            "94% Coverage",
+            "Cloud Run"
+          ],
+          "activation": 0.95,
+          "year": 2026
+        },
+        {
+          "id": "cnn_scratch",
+          "name": "CNN from Scratch",
+          "icon": "fa-microchip",
+          "description": "4 conv + 3 FC layers with ~1.07M params in pure Python/NumPy. Manual backpropagation, He initialization. FastAPI + Docker on Cloud Run with latency dashboard.",
+          "tags": [
+            "NumPy",
+            "1.07M Params",
+            "Cloud Run",
+            "FastAPI"
+          ],
+          "activation": 0.96,
+          "year": 2026
+        },
+        {
+          "id": "cvd_modeling",
+          "name": "CVD Risk Modeling",
+          "icon": "fa-heart",
+          "description": "End-to-end analysis of 70,000 patient records. Bootstrap CIs (10k iterations), Permutation Tests. BMI as CVD predictor validation.",
+          "tags": [
+            "70k Records",
+            "Bootstrap",
+            "Permutation Test",
+            "SciPy"
+          ],
+          "activation": 0.91,
+          "year": 2025
+        },
+        {
+          "id": "asl_classification",
+          "name": "ASL Classification",
+          "icon": "fa-hands",
+          "description": "Real-time American Sign Language recognition. OpenCV + MediaPipe hand-gesture ROI extraction at sub-100ms. EfficientNet-B0 transfer learning: 99.8% test accuracy.",
+          "tags": [
+            "99.8% Accuracy",
+            "EfficientNet",
+            "Real-Time",
+            "OpenCV"
+          ],
+          "activation": 0.94,
+          "year": 2025
+        },
+        {
+          "id": "devsecops_lta",
+          "name": "DevSecOps @ LTA",
+          "icon": "fa-building-shield",
+          "description": "Automated PowerShell hardening package (500+ CIS controls via HardeningKitty). Endpoint compliance 44%→89%. Azure Logic Apps pipeline for CrowdStrike→Sentinel threat hunting.",
+          "tags": [
+            "44%→89%",
+            "500+ Controls",
+            "Azure",
+            "LTA"
+          ],
+          "activation": 0.89,
+          "year": 2025
+        },
+        {
+          "id": "ai_ctf",
+          "name": "Singapore AI CTF",
+          "icon": "fa-flag",
+          "description": "Team AINT: 42nd place out of 325 teams. Applied adversarial ML and prompt engineering skills in competitive setting.",
+          "tags": [
+            "42nd/325",
+            "Adversarial ML",
+            "Team AINT"
+          ],
+          "activation": 0.84,
+          "year": 2025
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "medical",
+      "to": "math_stats",
+      "strength": 0.85
+    },
+    {
+      "from": "medical",
+      "to": "python",
+      "strength": 0.75
+    },
+    {
+      "from": "medical",
+      "to": "healthcare_ai",
+      "strength": 0.95
+    },
+    {
+      "from": "sutd",
+      "to": "python",
+      "strength": 0.85
+    },
+    {
+      "from": "sutd",
+      "to": "software_eng",
+      "strength": 0.85
+    },
+    {
+      "from": "sutd",
+      "to": "cloud_devops",
+      "strength": 0.8
+    },
+    {
+      "from": "sp_diploma",
+      "to": "math_stats",
+      "strength": 0.95
+    },
+    {
+      "from": "sp_diploma",
+      "to": "python",
+      "strength": 0.95
+    },
+    {
+      "from": "sp_diploma",
+      "to": "software_eng",
+      "strength": 0.9
+    },
+    {
+      "from": "sp_diploma",
+      "to": "cloud_devops",
+      "strength": 0.8
+    },
+    {
+      "from": "resilience",
+      "to": "python",
+      "strength": 0.9
+    },
+    {
+      "from": "resilience",
+      "to": "software_eng",
+      "strength": 0.85
+    },
+    {
+      "from": "resilience",
+      "to": "cybersec_foundation",
+      "strength": 0.8
+    },
+    {
+      "from": "python",
+      "to": "machine_learning",
+      "strength": 0.95
+    },
+    {
+      "from": "python",
+      "to": "deep_learning",
+      "strength": 0.95
+    },
+    {
+      "from": "python",
+      "to": "nlp_llm",
+      "strength": 0.9
+    },
+    {
+      "from": "python",
+      "to": "computer_vision",
+      "strength": 0.88
+    },
+    {
+      "from": "python",
+      "to": "mlops",
+      "strength": 0.85
+    },
+    {
+      "from": "python",
+      "to": "cybersec_foundation",
+      "strength": 0.7
+    },
+    {
+      "from": "math_stats",
+      "to": "machine_learning",
+      "strength": 0.95
+    },
+    {
+      "from": "math_stats",
+      "to": "deep_learning",
+      "strength": 0.92
+    },
+    {
+      "from": "math_stats",
+      "to": "computer_vision",
+      "strength": 0.8
+    },
+    {
+      "from": "math_stats",
+      "to": "cvd_modeling",
+      "strength": 0.9
+    },
+    {
+      "from": "software_eng",
+      "to": "mlops",
+      "strength": 0.9
+    },
+    {
+      "from": "software_eng",
+      "to": "machine_learning",
+      "strength": 0.75
+    },
+    {
+      "from": "software_eng",
+      "to": "deep_learning",
+      "strength": 0.7
+    },
+    {
+      "from": "cloud_devops",
+      "to": "mlops",
+      "strength": 0.95
+    },
+    {
+      "from": "cloud_devops",
+      "to": "cybersec_foundation",
+      "strength": 0.75
+    },
+    {
+      "from": "cloud_devops",
+      "to": "deep_learning",
+      "strength": 0.7
+    },
+    {
+      "from": "cloud_devops",
+      "to": "cloud_arch",
+      "strength": 0.9
+    },
+    {
+      "from": "cybersec_foundation",
+      "to": "devsecops",
+      "strength": 0.95
+    },
+    {
+      "from": "cybersec_foundation",
+      "to": "llm_security",
+      "strength": 0.9
+    },
+    {
+      "from": "cybersec_foundation",
+      "to": "cloud_arch",
+      "strength": 0.85
+    },
+    {
+      "from": "machine_learning",
+      "to": "healthcare_ai",
+      "strength": 0.9
+    },
+    {
+      "from": "machine_learning",
+      "to": "computer_vision",
+      "strength": 0.75
+    },
+    {
+      "from": "machine_learning",
+      "to": "cvd_modeling",
+      "strength": 0.85
+    },
+    {
+      "from": "machine_learning",
+      "to": "ai_ctf",
+      "strength": 0.7
+    },
+    {
+      "from": "deep_learning",
+      "to": "healthcare_ai",
+      "strength": 0.85
+    },
+    {
+      "from": "deep_learning",
+      "to": "computer_vision",
+      "strength": 0.92
+    },
+    {
+      "from": "deep_learning",
+      "to": "nlp_llm",
+      "strength": 0.8
+    },
+    {
+      "from": "deep_learning",
+      "to": "cnn_scratch",
+      "strength": 0.98
+    },
+    {
+      "from": "deep_learning",
+      "to": "asl_classification",
+      "strength": 0.9
+    },
+    {
+      "from": "nlp_llm",
+      "to": "rag_agents",
+      "strength": 0.95
+    },
+    {
+      "from": "nlp_llm",
+      "to": "llm_security",
+      "strength": 0.9
+    },
+    {
+      "from": "nlp_llm",
+      "to": "healthcare_ai",
+      "strength": 0.85
+    },
+    {
+      "from": "nlp_llm",
+      "to": "aegis_md",
+      "strength": 0.9
+    },
+    {
+      "from": "computer_vision",
+      "to": "asl_classification",
+      "strength": 0.98
+    },
+    {
+      "from": "computer_vision",
+      "to": "healthcare_ai",
+      "strength": 0.7
+    },
+    {
+      "from": "mlops",
+      "to": "rag_agents",
+      "strength": 0.85
+    },
+    {
+      "from": "mlops",
+      "to": "devsecops",
+      "strength": 0.75
+    },
+    {
+      "from": "mlops",
+      "to": "aegis_md",
+      "strength": 0.85
+    },
+    {
+      "from": "mlops",
+      "to": "cnn_scratch",
+      "strength": 0.8
+    },
+    {
+      "from": "healthcare_ai",
+      "to": "aegis_md",
+      "strength": 0.95
+    },
+    {
+      "from": "healthcare_ai",
+      "to": "cvd_modeling",
+      "strength": 0.8
+    },
+    {
+      "from": "healthcare_ai",
+      "to": "llm_security",
+      "strength": 0.65
+    },
+    {
+      "from": "llm_security",
+      "to": "aegis_md",
+      "strength": 0.9
+    },
+    {
+      "from": "llm_security",
+      "to": "ai_ctf",
+      "strength": 0.75
+    },
+    {
+      "from": "rag_agents",
+      "to": "aegis_md",
+      "strength": 0.95
+    },
+    {
+      "from": "rag_agents",
+      "to": "healthcare_ai",
+      "strength": 0.8
+    },
+    {
+      "from": "rag_agents",
+      "to": "llm_security",
+      "strength": 0.7
+    },
+    {
+      "from": "devsecops",
+      "to": "devsecops_lta",
+      "strength": 0.98
+    },
+    {
+      "from": "devsecops",
+      "to": "llm_security",
+      "strength": 0.8
+    },
+    {
+      "from": "devsecops",
+      "to": "ai_ctf",
+      "strength": 0.65
+    },
+    {
+      "from": "cloud_arch",
+      "to": "devsecops_lta",
+      "strength": 0.9
+    },
+    {
+      "from": "cloud_arch",
+      "to": "aegis_md",
+      "strength": 0.7
+    },
+    {
+      "from": "cnn_scratch",
+      "to": "asl_classification",
+      "strength": 0.7
+    },
+    {
+      "from": "cvd_modeling",
+      "to": "aegis_md",
+      "strength": 0.6
+    },
+    {
+      "from": "devsecops_lta",
+      "to": "ai_ctf",
+      "strength": 0.6
+    }
+  ]
+}
